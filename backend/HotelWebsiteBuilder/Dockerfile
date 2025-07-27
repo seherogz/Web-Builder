@@ -1,14 +1,14 @@
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 WORKDIR /app
-EXPOSE 80
-EXPOSE 443
+EXPOSE 8080
+EXPOSE 5001
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 COPY ["HotelWebsiteBuilder.csproj", "./"]
 RUN dotnet restore "HotelWebsiteBuilder.csproj"
 COPY . .
-WORKDIR "/src"
+WORKDIR "/src/."
 RUN dotnet build "HotelWebsiteBuilder.csproj" -c Release -o /app/build
 
 FROM build AS publish

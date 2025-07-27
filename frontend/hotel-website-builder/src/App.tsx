@@ -1,14 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Row, Col, Card, Alert } from 'react-bootstrap';
+import { Container, Row, Col, Alert } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
-import DesignSelection from './components/DesignSelection';
-import ContentSource from './components/ContentSource';
-import WebsitePreview from './components/WebsitePreview';
+import { 
+  Header, 
+  CommonCard, 
+  CommonButton, 
+  LoadingSpinner, 
+  ErrorMessage,
+  DesignSelection,
+  ContentSource,
+  WebsitePreview
+} from './components';
 import { WebsiteBuilderResponse, Hotel, WebsiteKeys } from './types';
 
 function App() {
-  const [currentStep, setCurrentStep] = useState(1);
+  const [currentStep, setCurrentStep] = useState(1); // 1 = Design Selection, 2 = Content Source, 3 = Website Preview
   const [selectedTemplate, setSelectedTemplate] = useState<string>('');
   const [sourceUrl, setSourceUrl] = useState<string>('');
   const [selectedHotel, setSelectedHotel] = useState<Hotel | null>(null);
@@ -36,14 +43,33 @@ function App() {
     try {
       const { websiteBuilderApi } = await import('./services/api');
       
-      const request = {
-        templateName: selectedTemplate || undefined,
-        sourceUrl: sourceUrl || undefined,
-        hotelId: selectedHotel?.id,
-        hotelData: Object.keys(hotelData).length > 0 ? hotelData : undefined,
-      };
+      let response: WebsiteBuilderResponse;
 
-      const response = await websiteBuilderApi.buildWebsite(request);
+      if (selectedHotel?.id) {
+        if (sourceUrl) {
+          // URL'den üret
+          response = await websiteBuilderApi.generateFromUrl({
+            hotelId: selectedHotel.id,
+            sourceUrl: sourceUrl
+          });
+        } else {
+          // Şablondan üret
+          response = await websiteBuilderApi.generateFromTemplate({
+            hotelId: selectedHotel.id,
+            templateName: selectedTemplate || 'modern'
+          });
+        }
+      } else {
+        // Eski yöntem (geriye uyumluluk)
+        const request = {
+          templateName: selectedTemplate || undefined,
+          sourceUrl: sourceUrl || undefined,
+          hotelId: selectedHotel?.id,
+          hotelData: Object.keys(hotelData).length > 0 ? hotelData : undefined,
+        };
+        response = await websiteBuilderApi.buildWebsite(request);
+      }
+
       setWebsiteResponse(response);
     } catch (err) {
       setError('Website oluşturulurken bir hata oluştu. Lütfen tekrar deneyin.');
@@ -67,21 +93,16 @@ function App() {
     if (currentStep === 3) {
       generateWebsite();
     }
-  }, [currentStep]);
+  }, [currentStep, selectedTemplate, sourceUrl, selectedHotel, hotelData]);
 
   return (
     <div className="App">
       <Container fluid className="py-4">
-        <Row className="justify-content-center">
+                <Row className="justify-content-center">
           <Col lg={10}>
-            <Card className="shadow">
-              <Card.Header className="bg-primary text-white">
-                <h1 className="text-center mb-0">
-                  <i className="fas fa-hotel me-2"></i>
-                  Otel Web Sitesi Oluşturucu
-                </h1>
-              </Card.Header>
-              <Card.Body className="p-4">
+            <CommonCard>
+              <Header title="Otel Web Sitesi Oluşturucu" />
+              <div className="p-4" style={{color: '#4c3949'}}>
                 {error && (
                   <Alert variant="danger" dismissible onClose={() => setError('')}>
                     {error}
@@ -106,8 +127,8 @@ function App() {
                     onReset={resetApp}
                   />
                 )}
-              </Card.Body>
-            </Card>
+              </div>
+            </CommonCard>
           </Col>
         </Row>
       </Container>

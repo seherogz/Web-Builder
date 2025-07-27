@@ -54,9 +54,20 @@ export interface WebsiteBuilderResponse {
   htmlContent: string;
   websiteKeys: WebsiteKeys;
   templateName: string;
+  outputPath: string;
 }
 
 export interface HotelSearchRequest {
   hotelId?: number;
   hotelName?: string;
+}
+
+export interface TemplateGenerationRequest {
+  hotelId: number;
+  templateName?: string;
+}
+
+export interface UrlGenerationRequest {
+  hotelId: number;
+  sourceUrl: string;
 } 

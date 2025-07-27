@@ -50,9 +50,14 @@ const WebsitePreview: React.FC<WebsitePreviewProps> = ({ response, loading, onRe
   if (loading) {
     return (
       <div className="text-center">
-        <h2>Website Oluşturuluyor...</h2>
-        <ProgressBar animated now={100} className="mb-3" />
-        <p className="text-muted">Lütfen bekleyin, website hazırlanıyor.</p>
+        <h2 style={{color: '#ffc2a4', fontWeight: 'bold'}}>Website Oluşturuluyor...</h2>
+        <ProgressBar 
+          animated 
+          now={100} 
+          className="mb-3" 
+          style={{backgroundColor: '#ff8386'}}
+        />
+        <p style={{color: '#913856', fontSize: '1.1rem'}}>Lütfen bekleyin, website hazırlanıyor.</p>
       </div>
     );
   }
@@ -60,10 +65,14 @@ const WebsitePreview: React.FC<WebsitePreviewProps> = ({ response, loading, onRe
   if (!response) {
     return (
       <div className="text-center">
-        <Alert variant="danger">
+        <Alert variant="danger" style={{backgroundColor: '#e5bbb1', borderColor: '#986277', color: '#4c3949'}}>
           Website oluşturulurken bir hata oluştu. Lütfen tekrar deneyin.
         </Alert>
-        <Button variant="primary" onClick={onReset}>
+        <Button 
+          style={{backgroundColor: '#986277', borderColor: '#986277', color: '#e5bbb1'}}
+          variant="danger" 
+          onClick={onReset}
+        >
           Baştan Başla
         </Button>
       </div>
@@ -73,17 +82,17 @@ const WebsitePreview: React.FC<WebsitePreviewProps> = ({ response, loading, onRe
   return (
     <div>
       <div className="text-center mb-4">
-        <h2>Adım 3: Website Önizleme</h2>
-        <p className="text-muted">Oluşturulan website'ı inceleyin ve indirin</p>
+              <h2 style={{color: '#4c3949', fontWeight: 'bold'}}>Adım 3: Website Önizleme</h2>
+      <p style={{color: '#664960', fontSize: '1.1rem'}}>Oluşturulan website'ı inceleyin ve indirin</p>
       </div>
 
       <Row className="mb-4">
         <Col md={6}>
-          <Card>
-            <Card.Header>
-              <h5 className="mb-0">Website Bilgileri</h5>
-            </Card.Header>
-            <Card.Body>
+                <Card style={{backgroundColor: 'rgba(229, 187, 177, 0.9)', borderColor: '#986277', boxShadow: '0 4px 15px rgba(76, 57, 73, 0.2)'}}>
+        <Card.Header style={{backgroundColor: '#4c3949', color: '#e5bbb1', borderBottom: '2px solid #986277'}}>
+          <h5 className="mb-0" style={{fontWeight: 'bold'}}>Website Bilgileri</h5>
+        </Card.Header>
+        <Card.Body style={{color: '#4c3949', backgroundColor: 'rgba(229, 187, 177, 0.7)'}}>
               <div className="mb-3">
                 <strong>Otel Adı:</strong> {response.websiteKeys.hotelname || 'Belirtilmemiş'}
               </div>
@@ -98,7 +107,13 @@ const WebsitePreview: React.FC<WebsitePreviewProps> = ({ response, loading, onRe
               </div>
               <div className="mb-3">
                 <strong>Kullanılan Şablon:</strong> 
-                <Badge bg="info" className="ms-2 text-capitalize">
+                <Badge style={{
+                  backgroundColor: '#4c3949', 
+                  color: '#e5bbb1',
+                  fontWeight: 'bold',
+                  padding: '6px 12px',
+                  borderRadius: '15px'
+                }} className="ms-2 text-capitalize">
                   {response.templateName}
                 </Badge>
               </div>
@@ -106,35 +121,63 @@ const WebsitePreview: React.FC<WebsitePreviewProps> = ({ response, loading, onRe
           </Card>
         </Col>
         <Col md={6}>
-          <Card>
-            <Card.Header>
-              <h5 className="mb-0">İşlemler</h5>
+          <Card style={{backgroundColor: 'rgba(229, 187, 177, 0.9)', borderColor: '#986277', boxShadow: '0 4px 15px rgba(76, 57, 73, 0.2)'}}>
+            <Card.Header style={{backgroundColor: '#4c3949', color: '#e5bbb1', borderBottom: '2px solid #986277'}}>
+              <h5 className="mb-0" style={{fontWeight: 'bold'}}>İşlemler</h5>
             </Card.Header>
-            <Card.Body>
+            <Card.Body style={{color: '#4c3949', backgroundColor: 'rgba(229, 187, 177, 0.7)'}}>
               <div className="d-grid gap-2">
                 <Button 
-                  variant="outline-primary" 
+                  style={{
+                    backgroundColor: '#986277', 
+                    borderColor: '#986277', 
+                    color: '#e5bbb1',
+                    fontWeight: 'bold',
+                    transition: 'all 0.3s ease'
+                  }}
+                  variant="danger" 
                   onClick={() => setShowPreview(true)}
                 >
                   <i className="fas fa-eye me-2"></i>
                   Önizleme
                 </Button>
                 <Button 
-                  variant="outline-secondary" 
+                  style={{
+                    backgroundColor: '#664960', 
+                    borderColor: '#664960', 
+                    color: '#e5bbb1',
+                    fontWeight: 'bold',
+                    transition: 'all 0.3s ease'
+                  }}
+                  variant="secondary" 
                   onClick={() => setShowCode(true)}
                 >
                   <i className="fas fa-code me-2"></i>
                   HTML Kodu Görüntüle
                 </Button>
                 <Button 
-                  variant="success" 
+                  style={{
+                    backgroundColor: '#d98c99', 
+                    borderColor: '#d98c99', 
+                    color: '#4c3949',
+                    fontWeight: 'bold',
+                    transition: 'all 0.3s ease'
+                  }}
+                  variant="warning" 
                   onClick={downloadHtml}
                 >
                   <i className="fas fa-download me-2"></i>
                   HTML İndir
                 </Button>
                 <Button 
-                  variant="info" 
+                  style={{
+                    backgroundColor: '#6a2b49', 
+                    borderColor: '#6a2b49', 
+                    color: '#ffc2a4',
+                    fontWeight: 'bold',
+                    transition: 'all 0.3s ease'
+                  }}
+                  variant="dark" 
                   onClick={copyToClipboard}
                 >
                   <i className="fas fa-copy me-2"></i>
@@ -147,7 +190,21 @@ const WebsitePreview: React.FC<WebsitePreviewProps> = ({ response, loading, onRe
       </Row>
 
       <div className="text-center">
-        <Button variant="primary" size="lg" onClick={onReset}>
+        <Button 
+          style={{
+            backgroundColor: '#6a2b49', 
+            borderColor: '#6a2b49', 
+            color: '#ffc2a4',
+            fontWeight: 'bold',
+            fontSize: '1.1rem',
+            padding: '12px 30px',
+            transition: 'all 0.3s ease',
+            boxShadow: '0 4px 15px rgba(76, 57, 73, 0.3)'
+          }}
+          variant="dark" 
+          size="lg" 
+          onClick={onReset}
+        >
           <i className="fas fa-redo me-2"></i>
           Yeni Website Oluştur
         </Button>
@@ -160,7 +217,7 @@ const WebsitePreview: React.FC<WebsitePreviewProps> = ({ response, loading, onRe
         size="xl"
         fullscreen
       >
-        <Modal.Header closeButton>
+        <Modal.Header closeButton style={{backgroundColor: '#4c3949', color: '#e5bbb1'}}>
           <Modal.Title>Website Önizleme</Modal.Title>
         </Modal.Header>
         <Modal.Body className="p-0">
@@ -170,11 +227,19 @@ const WebsitePreview: React.FC<WebsitePreviewProps> = ({ response, loading, onRe
             title="Website Preview"
           />
         </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowPreview(false)}>
+        <Modal.Footer style={{backgroundColor: '#e5bbb1'}}>
+          <Button 
+            style={{borderColor: '#664960', color: '#664960'}}
+            variant="outline-secondary" 
+            onClick={() => setShowPreview(false)}
+          >
             Kapat
           </Button>
-          <Button variant="primary" onClick={downloadHtml}>
+          <Button 
+            style={{backgroundColor: '#986277', borderColor: '#986277', color: '#e5bbb1'}}
+            variant="danger" 
+            onClick={downloadHtml}
+          >
             İndir
           </Button>
         </Modal.Footer>
@@ -186,32 +251,45 @@ const WebsitePreview: React.FC<WebsitePreviewProps> = ({ response, loading, onRe
         onHide={() => setShowCode(false)} 
         size="xl"
       >
-        <Modal.Header closeButton>
+        <Modal.Header closeButton style={{backgroundColor: '#4c3949', color: '#e5bbb1'}}>
           <Modal.Title>HTML Kodu</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <div style={{ 
-            backgroundColor: '#f8f9fa', 
+            backgroundColor: '#e5bbb1', 
             padding: '15px', 
             borderRadius: '5px',
             maxHeight: '60vh',
             overflowY: 'auto',
             fontFamily: 'monospace',
-            fontSize: '12px'
+            fontSize: '12px',
+            border: '2px solid #986277'
           }}>
             <pre style={{ margin: 0, whiteSpace: 'pre-wrap' }}>
               {response.htmlContent}
             </pre>
           </div>
         </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowCode(false)}>
+        <Modal.Footer style={{backgroundColor: '#ffc2a4'}}>
+          <Button 
+            style={{borderColor: '#913856', color: '#913856'}}
+            variant="outline-secondary" 
+            onClick={() => setShowCode(false)}
+          >
             Kapat
           </Button>
-          <Button variant="info" onClick={copyToClipboard}>
+          <Button 
+            style={{backgroundColor: '#6a2b49', borderColor: '#6a2b49', color: '#ffc2a4'}}
+            variant="dark" 
+            onClick={copyToClipboard}
+          >
             Kopyala
           </Button>
-          <Button variant="success" onClick={downloadHtml}>
+          <Button 
+            style={{backgroundColor: '#ff8386', borderColor: '#ff8386', color: '#6a2b49'}}
+            variant="warning" 
+            onClick={downloadHtml}
+          >
             İndir
           </Button>
         </Modal.Footer>

@@ -66,8 +66,8 @@ const DesignSelection: React.FC<DesignSelectionProps> = ({ onNext }) => {
   return (
     <div>
       <div className="text-center mb-4">
-        <h2>Adım 1: Tasarım Seçenekleri</h2>
-        <p className="text-muted">Web siteniz için tasarım yöntemini seçin</p>
+        <h2 style={{color: '#4c3949', fontWeight: 'bold'}}>Adım 1: Tasarım Seçenekleri</h2>
+        <p style={{color: '#664960', fontSize: '1.1rem'}}>Web siteniz için tasarım yöntemini seçin</p>
       </div>
 
       {error && (
@@ -79,16 +79,17 @@ const DesignSelection: React.FC<DesignSelectionProps> = ({ onNext }) => {
       <Row className="mb-4">
         <Col md={6}>
           <Card 
-            className={`h-100 cursor-pointer ${designMethod === 'template' ? 'border-primary' : ''}`}
+            className={`h-100 cursor-pointer ${designMethod === 'template' ? 'border-danger' : ''}`}
+            style={{borderColor: designMethod === 'template' ? '#986277' : undefined}}
             onClick={() => setDesignMethod('template')}
           >
             <Card.Body className="text-center">
-              <i className="fas fa-palette fa-3x text-primary mb-3"></i>
+              <i className="fas fa-palette fa-3x mb-3" style={{color: '#986277'}}></i>
               <Card.Title>Hazır Şablon Seçimi</Card.Title>
               <Card.Text>
                 Mevcut şablonlardan birini seçerek hızlıca başlayın.
               </Card.Text>
-              <Badge bg={designMethod === 'template' ? 'primary' : 'secondary'}>
+              <Badge bg={designMethod === 'template' ? 'danger' : 'secondary'}>
                 {designMethod === 'template' ? 'Seçildi' : 'Seç'}
               </Badge>
             </Card.Body>
@@ -96,16 +97,17 @@ const DesignSelection: React.FC<DesignSelectionProps> = ({ onNext }) => {
         </Col>
         <Col md={6}>
           <Card 
-            className={`h-100 cursor-pointer ${designMethod === 'url' ? 'border-primary' : ''}`}
+            className={`h-100 cursor-pointer ${designMethod === 'url' ? 'border-danger' : ''}`}
+            style={{borderColor: designMethod === 'url' ? '#986277' : undefined}}
             onClick={() => setDesignMethod('url')}
           >
             <Card.Body className="text-center">
-              <i className="fas fa-link fa-3x text-primary mb-3"></i>
+              <i className="fas fa-link fa-3x mb-3" style={{color: '#986277'}}></i>
               <Card.Title>URL ile Site Yapısı</Card.Title>
               <Card.Text>
                 Beğendiğiniz bir otel sitesinin URL'sini girin.
               </Card.Text>
-              <Badge bg={designMethod === 'url' ? 'primary' : 'secondary'}>
+              <Badge bg={designMethod === 'url' ? 'danger' : 'secondary'}>
                 {designMethod === 'url' ? 'Seçildi' : 'Seç'}
               </Badge>
             </Card.Body>
@@ -129,7 +131,8 @@ const DesignSelection: React.FC<DesignSelectionProps> = ({ onNext }) => {
                 {templates.map((template) => (
                   <Col md={4} key={template} className="mb-3">
                     <Card 
-                      className={`h-100 cursor-pointer ${selectedTemplate === template ? 'border-primary' : ''}`}
+                      className={`h-100 cursor-pointer ${selectedTemplate === template ? 'border-danger' : ''}`}
+                      style={{borderColor: selectedTemplate === template ? '#986277' : undefined}}
                       onClick={() => setSelectedTemplate(template)}
                     >
                       <Card.Body className="text-center">
@@ -139,7 +142,7 @@ const DesignSelection: React.FC<DesignSelectionProps> = ({ onNext }) => {
                           {templateDescriptions[template] || 'Profesyonel otel web sitesi şablonu'}
                         </Card.Text>
                         {selectedTemplate === template && (
-                          <Badge bg="primary">Seçildi</Badge>
+                          <Badge bg="danger">Seçildi</Badge>
                         )}
                       </Card.Body>
                     </Card>
@@ -175,10 +178,11 @@ const DesignSelection: React.FC<DesignSelectionProps> = ({ onNext }) => {
 
       <div className="text-center">
         <Button 
-          variant="primary" 
+          variant="danger" 
           size="lg" 
           onClick={handleNext}
           disabled={loading}
+          style={{backgroundColor: '#986277', borderColor: '#986277'}}
         >
           <i className="fas fa-arrow-right me-2"></i>
           Devam Et

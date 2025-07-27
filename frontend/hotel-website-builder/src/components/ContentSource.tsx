@@ -11,7 +11,7 @@ import {
   Table,
   Modal
 } from 'react-bootstrap';
-import { websiteBuilderApi } from '../services/api';
+import { hotelsApi } from '../services/api';
 import { Hotel, WebsiteKeys } from '../types';
 
 interface ContentSourceProps {
@@ -36,7 +36,7 @@ const ContentSource: React.FC<ContentSourceProps> = ({ onNext, onBack }) => {
   const loadHotels = async () => {
     try {
       setLoading(true);
-      const availableHotels = await websiteBuilderApi.getHotels();
+      const availableHotels = await hotelsApi.getHotels();
       setHotels(availableHotels);
     } catch (err) {
       setError('Oteller yüklenirken bir hata oluştu.');
@@ -77,7 +77,7 @@ const ContentSource: React.FC<ContentSourceProps> = ({ onNext, onBack }) => {
     
     try {
       setLoading(true);
-      const newHotel = await websiteBuilderApi.createHotel({
+      const newHotel = await hotelsApi.createHotel({
         hotelName: hotelData.hotelname || '',
         logoUrl: hotelData.logourl,
         phone: hotelData.phone || '',
@@ -130,8 +130,8 @@ const ContentSource: React.FC<ContentSourceProps> = ({ onNext, onBack }) => {
   return (
     <div>
       <div className="text-center mb-4">
-        <h2>Adım 2: İçerik Kaynağı</h2>
-        <p className="text-muted">Otel bilgilerini nasıl gireceğinizi seçin</p>
+        <h2 style={{color: '#4c3949', fontWeight: 'bold'}}>Adım 2: İçerik Kaynağı</h2>
+        <p style={{color: '#664960', fontSize: '1.1rem'}}>Otel bilgilerini nasıl gireceğinizi seçin</p>
       </div>
 
       {error && (
@@ -143,16 +143,17 @@ const ContentSource: React.FC<ContentSourceProps> = ({ onNext, onBack }) => {
       <Row className="mb-4">
         <Col md={6}>
           <Card 
-            className={`h-100 cursor-pointer ${contentMethod === 'existing' ? 'border-primary' : ''}`}
+            className={`h-100 cursor-pointer ${contentMethod === 'existing' ? 'border-danger' : ''}`}
+            style={{borderColor: contentMethod === 'existing' ? '#986277' : undefined}}
             onClick={() => setContentMethod('existing')}
           >
             <Card.Body className="text-center">
-              <i className="fas fa-database fa-3x text-primary mb-3"></i>
+              <i className="fas fa-database fa-3x mb-3" style={{color: '#986277'}}></i>
               <Card.Title>Mevcut Otel</Card.Title>
               <Card.Text>
                 Veritabanından kayıtlı bir otel seçin.
               </Card.Text>
-              <Badge bg={contentMethod === 'existing' ? 'primary' : 'secondary'}>
+              <Badge bg={contentMethod === 'existing' ? 'danger' : 'secondary'}>
                 {contentMethod === 'existing' ? 'Seçildi' : 'Seç'}
               </Badge>
             </Card.Body>
@@ -160,16 +161,17 @@ const ContentSource: React.FC<ContentSourceProps> = ({ onNext, onBack }) => {
         </Col>
         <Col md={6}>
           <Card 
-            className={`h-100 cursor-pointer ${contentMethod === 'new' ? 'border-primary' : ''}`}
+            className={`h-100 cursor-pointer ${contentMethod === 'new' ? 'border-danger' : ''}`}
+            style={{borderColor: contentMethod === 'new' ? '#986277' : undefined}}
             onClick={() => setContentMethod('new')}
           >
             <Card.Body className="text-center">
-              <i className="fas fa-plus fa-3x text-primary mb-3"></i>
+              <i className="fas fa-plus fa-3x mb-3" style={{color: '#986277'}}></i>
               <Card.Title>Yeni Otel</Card.Title>
               <Card.Text>
                 Yeni otel bilgilerini girin.
               </Card.Text>
-              <Badge bg={contentMethod === 'new' ? 'primary' : 'secondary'}>
+              <Badge bg={contentMethod === 'new' ? 'danger' : 'secondary'}>
                 {contentMethod === 'new' ? 'Seçildi' : 'Seç'}
               </Badge>
             </Card.Body>
@@ -241,9 +243,10 @@ const ContentSource: React.FC<ContentSourceProps> = ({ onNext, onBack }) => {
           </Card.Header>
           <Card.Body>
             <Button 
-              variant="outline-primary" 
+              variant="outline-danger" 
               onClick={() => setShowNewHotelModal(true)}
               className="w-100"
+              style={{borderColor: '#cb5367', color: '#cb5367'}}
             >
               <i className="fas fa-plus me-2"></i>
               Yeni Otel Ekle
@@ -258,10 +261,11 @@ const ContentSource: React.FC<ContentSourceProps> = ({ onNext, onBack }) => {
           Geri
         </Button>
         <Button 
-          variant="primary" 
+          variant="danger" 
           size="lg" 
           onClick={handleNext}
           disabled={loading}
+          style={{backgroundColor: '#986277', borderColor: '#986277'}}
         >
           <i className="fas fa-arrow-right me-2"></i>
           Devam Et

@@ -1,36 +1,45 @@
-# Docker Compose version removed as it's obsolete
+version: '3.8'
 
 services:
+  postgres:
+    image: postgres:15
+    container_name: hotel_website_builder_db
+    environment:
+      POSTGRES_DB: hotel_website_builder
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres123
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - hotel_builder_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d hotel_website_builder"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   backend:
     build:
       context: ./backend/HotelWebsiteBuilder
       dockerfile: Dockerfile
-    container_name: hotel-website-builder-backend
+    container_name: hotel_website_builder_backend
     ports:
-      - "7001:80"
+      - "5001:8080"
+      - "5002:5001"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=http://+:80
-    networks:
-      - hotel-website-network
-    restart: unless-stopped
-
-  frontend:
-    build:
-      context: ./frontend/hotel-website-builder
-      dockerfile: Dockerfile
-    container_name: hotel-website-builder-frontend
-    ports:
-      - "3000:80"
+      - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Database=hotel_website_builder;Username=postgres;Password=postgres123
     depends_on:
-      - backend
+      postgres:
+        condition: service_healthy
     networks:
-      - hotel-website-network
-    restart: unless-stopped
-
-networks:
-  hotel-website-network:
-    driver: bridge
+      - hotel_builder_network
 
 volumes:
-  hotel-data: 
+  postgres_data:
+
+networks:
+  hotel_builder_network:
+    driver: bridge 
