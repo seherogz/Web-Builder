@@ -1,0 +1,42 @@
+# Production environment Docker Compose
+
+services:
+  backend:
+    build:
+      context: ./backend/HotelWebsiteBuilder
+      dockerfile: Dockerfile
+    container_name: hotel-website-builder-backend-prod
+    ports:
+      - "7001:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:80
+    networks:
+      - hotel-website-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  frontend:
+    build:
+      context: ./frontend/hotel-website-builder
+      dockerfile: Dockerfile
+    container_name: hotel-website-builder-frontend-prod
+    ports:
+      - "3000:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - hotel-website-network
+    restart: unless-stopped
+
+networks:
+  hotel-website-network:
+    driver: bridge
+
+volumes:
+  hotel-data: 

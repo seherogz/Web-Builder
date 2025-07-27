@@ -1,0 +1,36 @@
+# Docker Compose version removed as it's obsolete
+
+services:
+  backend:
+    build:
+      context: ./backend/HotelWebsiteBuilder
+      dockerfile: Dockerfile
+    container_name: hotel-website-builder-backend
+    ports:
+      - "7001:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+    networks:
+      - hotel-website-network
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend/hotel-website-builder
+      dockerfile: Dockerfile
+    container_name: hotel-website-builder-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    networks:
+      - hotel-website-network
+    restart: unless-stopped
+
+networks:
+  hotel-website-network:
+    driver: bridge
+
+volumes:
+  hotel-data: 
