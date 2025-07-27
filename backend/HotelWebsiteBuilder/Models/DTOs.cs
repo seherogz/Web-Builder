@@ -35,11 +35,24 @@ namespace HotelWebsiteBuilder.Models
         public string HtmlContent { get; set; } = string.Empty;
         public WebsiteKeys WebsiteKeys { get; set; } = new();
         public string TemplateName { get; set; } = string.Empty;
+        public string OutputPath { get; set; } = string.Empty;
     }
 
     public class HotelSearchRequest
     {
         public int? HotelId { get; set; }
         public string? HotelName { get; set; }
+    }
+
+    public class TemplateGenerationRequest
+    {
+        public int HotelId { get; set; }
+        public string? TemplateName { get; set; }
+    }
+
+    public class UrlGenerationRequest
+    {
+        public int HotelId { get; set; }
+        public string SourceUrl { get; set; } = string.Empty;
     }
 } 

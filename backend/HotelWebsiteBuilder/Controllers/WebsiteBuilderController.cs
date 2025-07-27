@@ -11,15 +11,18 @@ namespace HotelWebsiteBuilder.Controllers
         private readonly IHotelService _hotelService;
         private readonly ITemplateService _templateService;
         private readonly IHtmlAnalysisService _htmlAnalysisService;
+        private readonly IHtmlUpdateService _htmlUpdateService;
 
         public WebsiteBuilderController(
             IHotelService hotelService,
             ITemplateService templateService,
-            IHtmlAnalysisService htmlAnalysisService)
+            IHtmlAnalysisService htmlAnalysisService,
+            IHtmlUpdateService htmlUpdateService)
         {
             _hotelService = hotelService;
             _templateService = templateService;
             _htmlAnalysisService = htmlAnalysisService;
+            _htmlUpdateService = htmlUpdateService;
         }
 
         [HttpPost("build")]
@@ -97,74 +100,67 @@ namespace HotelWebsiteBuilder.Controllers
             }
         }
 
-        [HttpGet("hotels")]
-        public async Task<ActionResult<List<Hotel>>> GetAllHotels()
+        [HttpPost("generate/template")]
+        public async Task<ActionResult<WebsiteBuilderResponse>> GenerateFromTemplate([FromBody] TemplateGenerationRequest request)
         {
             try
             {
-                var hotels = await _hotelService.GetAllHotelsAsync();
-                return Ok(hotels);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Sunucu hatası: {ex.Message}");
-            }
-        }
-
-        [HttpGet("hotels/{id}")]
-        public async Task<ActionResult<Hotel>> GetHotelById(int id)
-        {
-            try
-            {
-                var hotel = await _hotelService.GetHotelByIdAsync(id);
-                if (hotel == null)
-                {
-                    return NotFound("Otel bulunamadı");
-                }
-                return Ok(hotel);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Sunucu hatası: {ex.Message}");
-            }
-        }
-
-        [HttpPost("hotels")]
-        public async Task<ActionResult<Hotel>> CreateHotel([FromBody] Hotel hotel)
-        {
-            try
-            {
-                var createdHotel = await _hotelService.CreateHotelAsync(hotel);
-                return CreatedAtAction(nameof(GetHotelById), new { id = createdHotel.Id }, createdHotel);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Sunucu hatası: {ex.Message}");
-            }
-        }
-
-        [HttpPost("hotels/search")]
-        public async Task<ActionResult<Hotel>> SearchHotel([FromBody] HotelSearchRequest request)
-        {
-            try
-            {
-                Hotel? hotel = null;
-                
-                if (request.HotelId.HasValue)
-                {
-                    hotel = await _hotelService.GetHotelByIdAsync(request.HotelId.Value);
-                }
-                else if (!string.IsNullOrEmpty(request.HotelName))
-                {
-                    hotel = await _hotelService.GetHotelByNameAsync(request.HotelName);
-                }
-
+                // 1. Otel verilerini al
+                var hotel = await _hotelService.GetHotelByIdAsync(request.HotelId);
                 if (hotel == null)
                 {
                     return NotFound("Otel bulunamadı");
                 }
 
-                return Ok(hotel);
+                var websiteKeys = _hotelService.ConvertHotelToWebsiteKeys(hotel);
+
+                // 2. HTML şablonunu al
+                var htmlContent = await _templateService.GetTemplateAsync(request.TemplateName ?? "modern");
+
+                // 3. HTML'i güncelle ve dosyaya kaydet
+                var updatedHtml = await _htmlUpdateService.UpdateHtmlAndSaveAsync(htmlContent, websiteKeys, hotel.HotelName);
+
+                return Ok(new WebsiteBuilderResponse
+                {
+                    HtmlContent = updatedHtml,
+                    WebsiteKeys = websiteKeys,
+                    TemplateName = request.TemplateName ?? "modern",
+                    OutputPath = $"/productiondir/{hotel.HotelName.Replace(" ", "_").ToLower()}/index.html"
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Sunucu hatası: {ex.Message}");
+            }
+        }
+
+        [HttpPost("generate/from-url")]
+        public async Task<ActionResult<WebsiteBuilderResponse>> GenerateFromUrl([FromBody] UrlGenerationRequest request)
+        {
+            try
+            {
+                // 1. Otel verilerini al
+                var hotel = await _hotelService.GetHotelByIdAsync(request.HotelId);
+                if (hotel == null)
+                {
+                    return NotFound("Otel bulunamadı");
+                }
+
+                var websiteKeys = _hotelService.ConvertHotelToWebsiteKeys(hotel);
+
+                // 2. URL'den HTML analiz et
+                var htmlContent = await _htmlAnalysisService.AnalyzeAndExtractStructure(request.SourceUrl);
+
+                // 3. HTML'i güncelle ve dosyaya kaydet
+                var updatedHtml = await _htmlUpdateService.UpdateHtmlAndSaveAsync(htmlContent, websiteKeys, hotel.HotelName);
+
+                return Ok(new WebsiteBuilderResponse
+                {
+                    HtmlContent = updatedHtml,
+                    WebsiteKeys = websiteKeys,
+                    TemplateName = "url_analyzed",
+                    OutputPath = $"/productiondir/{hotel.HotelName.Replace(" ", "_").ToLower()}/index.html"
+                });
             }
             catch (Exception ex)
             {

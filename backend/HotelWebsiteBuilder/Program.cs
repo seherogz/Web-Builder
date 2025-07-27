@@ -27,13 +27,25 @@ builder.Services.AddCors(options =>
 builder.Services.AddHttpClient();
 
 // Add Entity Framework
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseInMemoryDatabase("HotelWebsiteBuilderDb"));
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+if (string.IsNullOrEmpty(connectionString))
+{
+    // Fallback to in-memory database for development
+    builder.Services.AddDbContext<ApplicationDbContext>(options =>
+        options.UseInMemoryDatabase("HotelWebsiteBuilderDb"));
+}
+else
+{
+    // Use PostgreSQL
+    builder.Services.AddDbContext<ApplicationDbContext>(options =>
+        options.UseNpgsql(connectionString));
+}
 
 // Add Services
 builder.Services.AddScoped<IHotelService, HotelService>();
 builder.Services.AddScoped<ITemplateService, TemplateService>();
 builder.Services.AddScoped<IHtmlAnalysisService, HtmlAnalysisService>();
+builder.Services.AddScoped<IHtmlUpdateService, HtmlUpdateService>();
 
 var app = builder.Build();
 
@@ -43,8 +55,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
-app.UseHttpsRedirection();
 
 app.UseCors("AllowAll");
 
