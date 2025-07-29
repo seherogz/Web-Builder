@@ -60,7 +60,28 @@ const DesignSelection: React.FC<DesignSelectionProps> = ({ onNext }) => {
   const templateDescriptions: { [key: string]: string } = {
     'modern': 'Modern ve şık tasarım, Bootstrap 5 ile oluşturulmuş',
     'classic': 'Klasik ve zarif tasarım, geleneksel otel siteleri için',
-    'luxury': 'Lüks ve premium görünüm, yüksek kaliteli oteller için'
+    'luxury': 'Lüks ve premium görünüm, yüksek kaliteli oteller için',
+    'minimalist': 'Minimalist ve temiz tasarım, modern iş otelleri için',
+    'boutique': 'Butik otel tasarımı, özel ve lüks deneyimler için',
+    'resort': 'Resort tarzı tasarım, tatil ve dinlenme odaklı'
+  };
+
+  const templateIcons: { [key: string]: string } = {
+    'modern': 'fas fa-rocket',
+    'classic': 'fas fa-crown',
+    'luxury': 'fas fa-gem',
+    'minimalist': 'fas fa-minus',
+    'boutique': 'fas fa-heart',
+    'resort': 'fas fa-umbrella-beach'
+  };
+
+  const templateColors: { [key: string]: string } = {
+    'modern': '#007bff',
+    'classic': '#6c757d',
+    'luxury': '#ffc107',
+    'minimalist': '#2c3e50',
+    'boutique': '#8b4513',
+    'resort': '#00bcd4'
   };
 
   return (
@@ -132,11 +153,17 @@ const DesignSelection: React.FC<DesignSelectionProps> = ({ onNext }) => {
                   <Col md={4} key={template} className="mb-3">
                     <Card 
                       className={`h-100 cursor-pointer ${selectedTemplate === template ? 'border-danger' : ''}`}
-                      style={{borderColor: selectedTemplate === template ? '#986277' : undefined}}
+                      style={{
+                        borderColor: selectedTemplate === template ? '#986277' : templateColors[template] || '#6c757d',
+                        transition: 'all 0.3s ease'
+                      }}
                       onClick={() => setSelectedTemplate(template)}
                     >
                       <Card.Body className="text-center">
-                        <i className="fas fa-image fa-2x text-muted mb-2"></i>
+                        <i 
+                          className={`${templateIcons[template] || 'fas fa-image'} fa-2x mb-2`}
+                          style={{color: templateColors[template] || '#6c757d'}}
+                        ></i>
                         <Card.Title className="text-capitalize">{template}</Card.Title>
                         <Card.Text className="small">
                           {templateDescriptions[template] || 'Profesyonel otel web sitesi şablonu'}

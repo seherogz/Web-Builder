@@ -244,6 +244,44 @@ namespace HotelWebsiteBuilder.Services
             var luxuryTemplate = modernTemplate.Replace("bg-dark", "bg-dark bg-gradient")
                                               .Replace("btn-primary", "btn-outline-light");
             await File.WriteAllTextAsync(Path.Combine(designsPath, "luxury.html"), luxuryTemplate);
+
+            // Check if new templates already exist, if not create them
+            var minimalistPath = Path.Combine(designsPath, "minimalist.html");
+            var boutiquePath = Path.Combine(designsPath, "boutique.html");
+            var resortPath = Path.Combine(designsPath, "resort.html");
+
+            if (!File.Exists(minimalistPath))
+            {
+                var minimalistTemplate = await LoadMinimalistTemplateAsync();
+                await File.WriteAllTextAsync(minimalistPath, minimalistTemplate);
+            }
+
+            if (!File.Exists(boutiquePath))
+            {
+                var boutiqueTemplate = await LoadBoutiqueTemplateAsync();
+                await File.WriteAllTextAsync(boutiquePath, boutiqueTemplate);
+            }
+
+            if (!File.Exists(resortPath))
+            {
+                var resortTemplate = await LoadResortTemplateAsync();
+                await File.WriteAllTextAsync(resortPath, resortTemplate);
+            }
+        }
+
+        private async Task<string> LoadMinimalistTemplateAsync()
+        {
+            return await File.ReadAllTextAsync(Path.Combine(_environment.WebRootPath, "designs", "minimalist.html"));
+        }
+
+        private async Task<string> LoadBoutiqueTemplateAsync()
+        {
+            return await File.ReadAllTextAsync(Path.Combine(_environment.WebRootPath, "designs", "boutique.html"));
+        }
+
+        private async Task<string> LoadResortTemplateAsync()
+        {
+            return await File.ReadAllTextAsync(Path.Combine(_environment.WebRootPath, "designs", "resort.html"));
         }
     }
 } 

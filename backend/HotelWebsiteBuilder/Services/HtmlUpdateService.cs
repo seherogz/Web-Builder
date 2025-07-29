@@ -51,6 +51,11 @@ namespace HotelWebsiteBuilder.Services
                 updatedHtml = updatedHtml.UpdateImageSrc("hotel-logo", websiteKeys.logourl);
                 updatedHtml = updatedHtml.UpdatePlaceholderText("{{LOGO_URL}}", websiteKeys.logourl);
             }
+            else
+            {
+                // Logo yoksa placeholder kullan
+                updatedHtml = updatedHtml.UpdatePlaceholderText("{{LOGO_URL}}", "https://via.placeholder.com/150x50");
+            }
 
             // Phone güncelle
             if (!string.IsNullOrEmpty(websiteKeys.phone))
@@ -79,11 +84,19 @@ namespace HotelWebsiteBuilder.Services
                 updatedHtml = updatedHtml.UpdateImageSrc("gallery-image-1", websiteKeys.galleryimage1);
                 updatedHtml = updatedHtml.UpdatePlaceholderText("{{GALLERY_IMAGE_1}}", websiteKeys.galleryimage1);
             }
+            else
+            {
+                updatedHtml = updatedHtml.UpdatePlaceholderText("{{GALLERY_IMAGE_1}}", "https://via.placeholder.com/600x400");
+            }
 
             if (!string.IsNullOrEmpty(websiteKeys.galleryimage2))
             {
                 updatedHtml = updatedHtml.UpdateImageSrc("gallery-image-2", websiteKeys.galleryimage2);
                 updatedHtml = updatedHtml.UpdatePlaceholderText("{{GALLERY_IMAGE_2}}", websiteKeys.galleryimage2);
+            }
+            else
+            {
+                updatedHtml = updatedHtml.UpdatePlaceholderText("{{GALLERY_IMAGE_2}}", "https://via.placeholder.com/400x300");
             }
 
             if (!string.IsNullOrEmpty(websiteKeys.galleryimage3))
@@ -91,17 +104,29 @@ namespace HotelWebsiteBuilder.Services
                 updatedHtml = updatedHtml.UpdateImageSrc("gallery-image-3", websiteKeys.galleryimage3);
                 updatedHtml = updatedHtml.UpdatePlaceholderText("{{GALLERY_IMAGE_3}}", websiteKeys.galleryimage3);
             }
+            else
+            {
+                updatedHtml = updatedHtml.UpdatePlaceholderText("{{GALLERY_IMAGE_3}}", "https://via.placeholder.com/400x300");
+            }
 
             if (!string.IsNullOrEmpty(websiteKeys.galleryimage4))
             {
                 updatedHtml = updatedHtml.UpdateImageSrc("gallery-image-4", websiteKeys.galleryimage4);
                 updatedHtml = updatedHtml.UpdatePlaceholderText("{{GALLERY_IMAGE_4}}", websiteKeys.galleryimage4);
             }
+            else
+            {
+                updatedHtml = updatedHtml.UpdatePlaceholderText("{{GALLERY_IMAGE_4}}", "https://via.placeholder.com/400x300");
+            }
 
             if (!string.IsNullOrEmpty(websiteKeys.galleryimage5))
             {
                 updatedHtml = updatedHtml.UpdateImageSrc("gallery-image-5", websiteKeys.galleryimage5);
                 updatedHtml = updatedHtml.UpdatePlaceholderText("{{GALLERY_IMAGE_5}}", websiteKeys.galleryimage5);
+            }
+            else
+            {
+                updatedHtml = updatedHtml.UpdatePlaceholderText("{{GALLERY_IMAGE_5}}", "https://via.placeholder.com/600x400");
             }
 
             // Social media links güncelle
@@ -110,17 +135,29 @@ namespace HotelWebsiteBuilder.Services
                 updatedHtml = updatedHtml.UpdateLinkHref("facebook-link", websiteKeys.facebook);
                 updatedHtml = updatedHtml.UpdatePlaceholderText("{{FACEBOOK}}", websiteKeys.facebook);
             }
+            else
+            {
+                updatedHtml = updatedHtml.UpdatePlaceholderText("{{FACEBOOK}}", "#");
+            }
 
             if (!string.IsNullOrEmpty(websiteKeys.instagram))
             {
                 updatedHtml = updatedHtml.UpdateLinkHref("instagram-link", websiteKeys.instagram);
                 updatedHtml = updatedHtml.UpdatePlaceholderText("{{INSTAGRAM}}", websiteKeys.instagram);
             }
+            else
+            {
+                updatedHtml = updatedHtml.UpdatePlaceholderText("{{INSTAGRAM}}", "#");
+            }
 
             if (!string.IsNullOrEmpty(websiteKeys.twitter))
             {
                 updatedHtml = updatedHtml.UpdateLinkHref("twitter-link", websiteKeys.twitter);
                 updatedHtml = updatedHtml.UpdatePlaceholderText("{{TWITTER}}", websiteKeys.twitter);
+            }
+            else
+            {
+                updatedHtml = updatedHtml.UpdatePlaceholderText("{{TWITTER}}", "#");
             }
 
             if (!string.IsNullOrEmpty(websiteKeys.website))
