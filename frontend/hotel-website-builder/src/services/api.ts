@@ -3,12 +3,12 @@ import {
   WebsiteBuilderRequest, 
   WebsiteBuilderResponse, 
   Hotel, 
-  HotelSearchRequest,
   TemplateGenerationRequest,
   UrlGenerationRequest
 } from '../types';
 
-const API_BASE_URL = 'http://localhost:5001/api';
+const API_BASE_URL = 'http://localhost:5000/api';
+const BACKEND_BASE_URL = 'http://localhost:5000';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -53,27 +53,49 @@ export const hotelsApi = {
 export const websiteBuilderApi = {
   // Şablondan site üret
   generateFromTemplate: async (request: TemplateGenerationRequest): Promise<WebsiteBuilderResponse> => {
-    const response = await api.post<WebsiteBuilderResponse>('/WebsiteBuilder/generate/template', request);
+    const response = await api.post<WebsiteBuilderResponse>('/websitebuilder/generate/template', request);
     return response.data;
   },
 
   // URL'den site üret
   generateFromUrl: async (request: UrlGenerationRequest): Promise<WebsiteBuilderResponse> => {
-    const response = await api.post<WebsiteBuilderResponse>('/WebsiteBuilder/generate/from-url', request);
+    const response = await api.post<WebsiteBuilderResponse>('/websitebuilder/generate/from-url', request);
+    return response.data;
+  },
+
+  // URL'den site klonla (yeni endpoint)
+  generateFromUrlClone: async (request: UrlGenerationRequest): Promise<WebsiteBuilderResponse> => {
+    const response = await api.post<WebsiteBuilderResponse>('/websitebuilder/generate/from-url-clone', request);
+    return response.data;
+  },
+
+  // URL'den klonlama
+  cloneFromUrl: async (url: string, hotelData: any): Promise<any> => {
+    const response = await api.post('/websitebuilder/clone-from-url', {
+      url: url,
+      hotelData: hotelData
+    });
     return response.data;
   },
 
   // Mevcut şablonları getir
   getTemplates: async (): Promise<string[]> => {
-    const response = await api.get<string[]>('/WebsiteBuilder/templates');
+    const response = await api.get<string[]>('/websitebuilder/templates');
     return response.data;
   },
 
   // Eski build endpoint (geriye uyumluluk için)
   buildWebsite: async (request: WebsiteBuilderRequest): Promise<WebsiteBuilderResponse> => {
-    const response = await api.post<WebsiteBuilderResponse>('/WebsiteBuilder/build', request);
+    const response = await api.post<WebsiteBuilderResponse>('/websitebuilder/build', request);
+    return response.data;
+  },
+
+  // Otelleri getir
+  getHotels: async (): Promise<Hotel[]> => {
+    const response = await api.get<Hotel[]>('/hotels');
     return response.data;
   },
 };
 
+export { BACKEND_BASE_URL };
 export default api; 

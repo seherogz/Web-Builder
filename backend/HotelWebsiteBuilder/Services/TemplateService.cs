@@ -42,17 +42,21 @@ namespace HotelWebsiteBuilder.Services
             }
             
             var files = Directory.GetFiles(designsPath, "*.html");
-            return files.Select(Path.GetFileNameWithoutExtension).Where(x => x != null).ToList();
+            var templates = files.Select(Path.GetFileNameWithoutExtension)
+                               .Where(x => !string.IsNullOrEmpty(x))
+                               .Select(x => x!)
+                               .ToList();
+            return templates;
         }
 
-        public Task<string> LoadTemplateFromFileAsync(string templateName)
+        public async Task<string> LoadTemplateFromFileAsync(string templateName)
         {
-            return GetTemplateAsync(templateName);
+            return await GetTemplateAsync(templateName);
         }
 
         private async Task<string> LoadDefaultTemplateAsync()
         {
-            return @"
+            return await Task.FromResult(@"
 <!DOCTYPE html>
 <html lang=""tr"">
 <head>
@@ -224,7 +228,7 @@ namespace HotelWebsiteBuilder.Services
 
     <script src=""https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js""></script>
 </body>
-</html>";
+</html>");
         }
 
         private async Task CreateDefaultTemplatesAsync()

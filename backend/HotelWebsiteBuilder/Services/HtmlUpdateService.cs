@@ -38,160 +38,148 @@ namespace HotelWebsiteBuilder.Services
                 updatedHtml = updatedHtml.UpdateMetaDescription(websiteKeys.description);
             }
 
-            // Hotel name güncelle
+            // Hotel name güncelle - tüm placeholder'ları değiştir
             if (!string.IsNullOrEmpty(websiteKeys.hotelname))
             {
-                updatedHtml = updatedHtml.UpdateElementById("hotel-name", websiteKeys.hotelname);
-                updatedHtml = updatedHtml.UpdatePlaceholderText("{{HOTEL_NAME}}", websiteKeys.hotelname);
+                updatedHtml = updatedHtml.Replace("Otel Adı", websiteKeys.hotelname);
+                updatedHtml = updatedHtml.Replace("{{HOTEL_NAME}}", websiteKeys.hotelname);
             }
 
             // Logo güncelle
             if (!string.IsNullOrEmpty(websiteKeys.logourl))
             {
-                updatedHtml = updatedHtml.UpdateImageSrc("hotel-logo", websiteKeys.logourl);
-                updatedHtml = updatedHtml.UpdatePlaceholderText("{{LOGO_URL}}", websiteKeys.logourl);
+                updatedHtml = updatedHtml.Replace("{{LOGO_URL}}", websiteKeys.logourl);
             }
             else
             {
-                // Logo yoksa placeholder kullan
-                updatedHtml = updatedHtml.UpdatePlaceholderText("{{LOGO_URL}}", "https://via.placeholder.com/150x50");
+                updatedHtml = updatedHtml.Replace("{{LOGO_URL}}", "https://via.placeholder.com/150x50");
             }
 
             // Phone güncelle
             if (!string.IsNullOrEmpty(websiteKeys.phone))
             {
-                updatedHtml = updatedHtml.UpdateElementById("hotel-phone", websiteKeys.phone);
-                updatedHtml = updatedHtml.UpdatePlaceholderText("{{PHONE}}", websiteKeys.phone);
+                updatedHtml = updatedHtml.Replace("Telefon numarası", websiteKeys.phone);
+                updatedHtml = updatedHtml.Replace("{{PHONE}}", websiteKeys.phone);
             }
 
             // Email güncelle
             if (!string.IsNullOrEmpty(websiteKeys.email))
             {
-                updatedHtml = updatedHtml.UpdateElementById("hotel-email", websiteKeys.email);
-                updatedHtml = updatedHtml.UpdatePlaceholderText("{{EMAIL}}", websiteKeys.email);
+                updatedHtml = updatedHtml.Replace("E-posta adresi", websiteKeys.email);
+                updatedHtml = updatedHtml.Replace("{{EMAIL}}", websiteKeys.email);
             }
 
             // Address güncelle
             if (!string.IsNullOrEmpty(websiteKeys.address))
             {
-                updatedHtml = updatedHtml.UpdateElementById("hotel-address", websiteKeys.address);
-                updatedHtml = updatedHtml.UpdatePlaceholderText("{{ADDRESS}}", websiteKeys.address);
+                updatedHtml = updatedHtml.Replace("Adres bilgisi", websiteKeys.address);
+                updatedHtml = updatedHtml.Replace("{{ADDRESS}}", websiteKeys.address);
             }
 
             // Gallery images güncelle
             if (!string.IsNullOrEmpty(websiteKeys.galleryimage1))
             {
-                updatedHtml = updatedHtml.UpdateImageSrc("gallery-image-1", websiteKeys.galleryimage1);
-                updatedHtml = updatedHtml.UpdatePlaceholderText("{{GALLERY_IMAGE_1}}", websiteKeys.galleryimage1);
+                updatedHtml = updatedHtml.Replace("{{GALLERY_IMAGE_1}}", websiteKeys.galleryimage1);
             }
             else
             {
-                updatedHtml = updatedHtml.UpdatePlaceholderText("{{GALLERY_IMAGE_1}}", "https://via.placeholder.com/600x400");
+                updatedHtml = updatedHtml.Replace("{{GALLERY_IMAGE_1}}", "https://via.placeholder.com/600x400");
             }
 
             if (!string.IsNullOrEmpty(websiteKeys.galleryimage2))
             {
-                updatedHtml = updatedHtml.UpdateImageSrc("gallery-image-2", websiteKeys.galleryimage2);
-                updatedHtml = updatedHtml.UpdatePlaceholderText("{{GALLERY_IMAGE_2}}", websiteKeys.galleryimage2);
+                updatedHtml = updatedHtml.Replace("{{GALLERY_IMAGE_2}}", websiteKeys.galleryimage2);
             }
             else
             {
-                updatedHtml = updatedHtml.UpdatePlaceholderText("{{GALLERY_IMAGE_2}}", "https://via.placeholder.com/400x300");
+                updatedHtml = updatedHtml.Replace("{{GALLERY_IMAGE_2}}", "https://via.placeholder.com/400x300");
             }
 
             if (!string.IsNullOrEmpty(websiteKeys.galleryimage3))
             {
-                updatedHtml = updatedHtml.UpdateImageSrc("gallery-image-3", websiteKeys.galleryimage3);
-                updatedHtml = updatedHtml.UpdatePlaceholderText("{{GALLERY_IMAGE_3}}", websiteKeys.galleryimage3);
+                updatedHtml = updatedHtml.Replace("{{GALLERY_IMAGE_3}}", websiteKeys.galleryimage3);
             }
             else
             {
-                updatedHtml = updatedHtml.UpdatePlaceholderText("{{GALLERY_IMAGE_3}}", "https://via.placeholder.com/400x300");
+                updatedHtml = updatedHtml.Replace("{{GALLERY_IMAGE_3}}", "https://via.placeholder.com/400x300");
             }
 
             if (!string.IsNullOrEmpty(websiteKeys.galleryimage4))
             {
-                updatedHtml = updatedHtml.UpdateImageSrc("gallery-image-4", websiteKeys.galleryimage4);
-                updatedHtml = updatedHtml.UpdatePlaceholderText("{{GALLERY_IMAGE_4}}", websiteKeys.galleryimage4);
+                updatedHtml = updatedHtml.Replace("{{GALLERY_IMAGE_4}}", websiteKeys.galleryimage4);
             }
             else
             {
-                updatedHtml = updatedHtml.UpdatePlaceholderText("{{GALLERY_IMAGE_4}}", "https://via.placeholder.com/400x300");
+                updatedHtml = updatedHtml.Replace("{{GALLERY_IMAGE_4}}", "https://via.placeholder.com/400x300");
             }
 
             if (!string.IsNullOrEmpty(websiteKeys.galleryimage5))
             {
-                updatedHtml = updatedHtml.UpdateImageSrc("gallery-image-5", websiteKeys.galleryimage5);
-                updatedHtml = updatedHtml.UpdatePlaceholderText("{{GALLERY_IMAGE_5}}", websiteKeys.galleryimage5);
+                updatedHtml = updatedHtml.Replace("{{GALLERY_IMAGE_5}}", websiteKeys.galleryimage5);
             }
             else
             {
-                updatedHtml = updatedHtml.UpdatePlaceholderText("{{GALLERY_IMAGE_5}}", "https://via.placeholder.com/600x400");
+                updatedHtml = updatedHtml.Replace("{{GALLERY_IMAGE_5}}", "https://via.placeholder.com/600x400");
             }
 
             // Social media links güncelle
             if (!string.IsNullOrEmpty(websiteKeys.facebook))
             {
-                updatedHtml = updatedHtml.UpdateLinkHref("facebook-link", websiteKeys.facebook);
-                updatedHtml = updatedHtml.UpdatePlaceholderText("{{FACEBOOK}}", websiteKeys.facebook);
+                updatedHtml = updatedHtml.Replace("{{FACEBOOK}}", websiteKeys.facebook);
             }
             else
             {
-                updatedHtml = updatedHtml.UpdatePlaceholderText("{{FACEBOOK}}", "#");
+                updatedHtml = updatedHtml.Replace("{{FACEBOOK}}", "#");
             }
 
             if (!string.IsNullOrEmpty(websiteKeys.instagram))
             {
-                updatedHtml = updatedHtml.UpdateLinkHref("instagram-link", websiteKeys.instagram);
-                updatedHtml = updatedHtml.UpdatePlaceholderText("{{INSTAGRAM}}", websiteKeys.instagram);
+                updatedHtml = updatedHtml.Replace("{{INSTAGRAM}}", websiteKeys.instagram);
             }
             else
             {
-                updatedHtml = updatedHtml.UpdatePlaceholderText("{{INSTAGRAM}}", "#");
+                updatedHtml = updatedHtml.Replace("{{INSTAGRAM}}", "#");
             }
 
             if (!string.IsNullOrEmpty(websiteKeys.twitter))
             {
-                updatedHtml = updatedHtml.UpdateLinkHref("twitter-link", websiteKeys.twitter);
-                updatedHtml = updatedHtml.UpdatePlaceholderText("{{TWITTER}}", websiteKeys.twitter);
+                updatedHtml = updatedHtml.Replace("{{TWITTER}}", websiteKeys.twitter);
             }
             else
             {
-                updatedHtml = updatedHtml.UpdatePlaceholderText("{{TWITTER}}", "#");
+                updatedHtml = updatedHtml.Replace("{{TWITTER}}", "#");
             }
 
             if (!string.IsNullOrEmpty(websiteKeys.website))
             {
-                updatedHtml = updatedHtml.UpdateLinkHref("website-link", websiteKeys.website);
-                updatedHtml = updatedHtml.UpdatePlaceholderText("{{WEBSITE}}", websiteKeys.website);
+                updatedHtml = updatedHtml.Replace("{{WEBSITE}}", websiteKeys.website);
             }
 
             // Description güncelle
             if (!string.IsNullOrEmpty(websiteKeys.description))
             {
-                updatedHtml = updatedHtml.UpdateElementById("hotel-description", websiteKeys.description);
-                updatedHtml = updatedHtml.UpdatePlaceholderText("{{DESCRIPTION}}", websiteKeys.description);
+                updatedHtml = updatedHtml.Replace("Otel açıklaması buraya gelecek", websiteKeys.description);
+                updatedHtml = updatedHtml.Replace("{{DESCRIPTION}}", websiteKeys.description);
             }
 
             // Amenities güncelle
             if (!string.IsNullOrEmpty(websiteKeys.amenities))
             {
-                updatedHtml = updatedHtml.UpdateElementById("hotel-amenities", websiteKeys.amenities);
-                updatedHtml = updatedHtml.UpdatePlaceholderText("{{AMENITIES}}", websiteKeys.amenities);
+                updatedHtml = updatedHtml.Replace("Özellikler listesi buraya gelecek", websiteKeys.amenities);
+                updatedHtml = updatedHtml.Replace("{{AMENITIES}}", websiteKeys.amenities);
             }
 
             // Room types güncelle
             if (!string.IsNullOrEmpty(websiteKeys.roomtypes))
             {
-                updatedHtml = updatedHtml.UpdateElementById("hotel-room-types", websiteKeys.roomtypes);
-                updatedHtml = updatedHtml.UpdatePlaceholderText("{{ROOM_TYPES}}", websiteKeys.roomtypes);
+                updatedHtml = updatedHtml.Replace("{{ROOM_TYPES}}", websiteKeys.roomtypes);
             }
 
             // Pricing güncelle
             if (!string.IsNullOrEmpty(websiteKeys.pricing))
             {
-                updatedHtml = updatedHtml.UpdateElementById("hotel-pricing", websiteKeys.pricing);
-                updatedHtml = updatedHtml.UpdatePlaceholderText("{{PRICING}}", websiteKeys.pricing);
+                updatedHtml = updatedHtml.Replace("Fiyat bilgisi", websiteKeys.pricing);
+                updatedHtml = updatedHtml.Replace("{{PRICING}}", websiteKeys.pricing);
             }
 
             return updatedHtml;

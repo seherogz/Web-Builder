@@ -12,14 +12,17 @@ import {
   Modal
 } from 'react-bootstrap';
 import { hotelsApi } from '../services/api';
+import api from '../services/api';
 import { Hotel, WebsiteKeys } from '../types';
 
 interface ContentSourceProps {
-  onNext: (hotel: Hotel | null, data: WebsiteKeys) => void;
+  onNext: (hotel: Hotel | null, data: WebsiteKeys, cloneResponse?: any) => void;
   onBack: () => void;
+  isCloneMode?: boolean;
+  sourceUrl?: string;
 }
 
-const ContentSource: React.FC<ContentSourceProps> = ({ onNext, onBack }) => {
+const ContentSource: React.FC<ContentSourceProps> = ({ onNext, onBack, isCloneMode = false, sourceUrl = '' }) => {
   const [contentMethod, setContentMethod] = useState<'existing' | 'new'>('existing');
   const [hotels, setHotels] = useState<Hotel[]>([]);
   const [selectedHotel, setSelectedHotel] = useState<Hotel | null>(null);
@@ -120,7 +123,75 @@ const ContentSource: React.FC<ContentSourceProps> = ({ onNext, onBack }) => {
       return;
     }
 
-    onNext(selectedHotel, hotelData);
+    // Eğer klonlama modundaysa ve URL varsa, doğrudan klonlama yap
+    if (isCloneMode && sourceUrl) {
+      handleClone();
+    } else {
+      onNext(selectedHotel, hotelData);
+    }
+  };
+
+  const handleClone = async () => {
+    if (!sourceUrl.trim()) {
+      setError('Kaynak URL bulunamadı.');
+      return;
+    }
+
+    if (contentMethod === 'existing' && !selectedHotel) {
+      setError('Lütfen bir otel seçin.');
+      return;
+    }
+
+    if (contentMethod === 'new' && !hotelData.hotelname) {
+      setError('Lütfen otel adını girin.');
+      return;
+    }
+
+    setLoading(true);
+    setError('');
+
+    try {
+      const { websiteBuilderApi } = await import('../services/api');
+      
+      let response;
+      
+      if (contentMethod === 'existing' && selectedHotel) {
+        // Mevcut otel ile klonlama (yeni endpoint)
+        console.log('Klonlama başlatılıyor:', {
+          hotelId: selectedHotel.id,
+          sourceUrl: sourceUrl.trim(),
+          hotelName: selectedHotel.hotelName
+        });
+        
+        response = await websiteBuilderApi.generateFromUrlClone({
+          hotelId: selectedHotel.id,
+          sourceUrl: sourceUrl.trim()
+        });
+      } else {
+        // Yeni otel ile klonlama
+        response = await websiteBuilderApi.cloneFromUrl(sourceUrl.trim(), hotelData);
+      }
+
+      console.log('Klonlama sonucu:', response);
+
+      if (response.outputPath) {
+        // Başarılı klonlama sonrası preview'e git
+        onNext(selectedHotel, hotelData, {
+          success: true,
+          siteUrl: response.outputPath,
+          hotelName: selectedHotel?.hotelName || hotelData.hotelname,
+          message: 'Site başarıyla klonlandı'
+        });
+      } else {
+        setError('Site klonlanırken bir hata oluştu');
+      }
+    } catch (err: any) {
+      console.error('Clone error:', err);
+      const errorMessage = err.response?.data?.message || err.message || 'Site klonlanırken bir hata oluştu';
+      setError(errorMessage);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const filteredHotels = hotels.filter(hotel =>
@@ -130,8 +201,20 @@ const ContentSource: React.FC<ContentSourceProps> = ({ onNext, onBack }) => {
   return (
     <div>
       <div className="text-center mb-4">
-        <h2 style={{color: '#4c3949', fontWeight: 'bold'}}>Adım 2: İçerik Kaynağı</h2>
-        <p style={{color: '#664960', fontSize: '1.1rem'}}>Otel bilgilerini nasıl gireceğinizi seçin</p>
+        <h2 style={{color: '#4c3949', fontWeight: 'bold'}}>
+          {isCloneMode ? 'Adım 2: Otel Seçimi ve Klonlama' : 'Adım 2: İçerik Kaynağı'}
+        </h2>
+        <p style={{color: '#664960', fontSize: '1.1rem'}}>
+          {isCloneMode 
+            ? 'Klonlanacak oteli seçin veya yeni otel bilgilerini girin' 
+            : 'Otel bilgilerini nasıl gireceğinizi seçin'
+          }
+        </p>
+        {isCloneMode && sourceUrl && (
+          <Alert variant="info" className="mt-3">
+            <strong>Kaynak URL:</strong> {sourceUrl}
+          </Alert>
+        )}
       </div>
 
       {error && (
@@ -151,7 +234,7 @@ const ContentSource: React.FC<ContentSourceProps> = ({ onNext, onBack }) => {
               <i className="fas fa-database fa-3x mb-3" style={{color: '#986277'}}></i>
               <Card.Title>Mevcut Otel</Card.Title>
               <Card.Text>
-                Veritabanından kayıtlı bir otel seçin.
+                Veritabanından kayıtlı bir otel seçin. URL girilirse otel bilgileri URL'den güncellenecek.
               </Card.Text>
               <Badge bg={contentMethod === 'existing' ? 'danger' : 'secondary'}>
                 {contentMethod === 'existing' ? 'Seçildi' : 'Seç'}
@@ -169,7 +252,7 @@ const ContentSource: React.FC<ContentSourceProps> = ({ onNext, onBack }) => {
               <i className="fas fa-plus fa-3x mb-3" style={{color: '#986277'}}></i>
               <Card.Title>Yeni Otel</Card.Title>
               <Card.Text>
-                Yeni otel bilgilerini girin.
+                Yeni otel bilgilerini girin. URL girilirse yeni otel URL'den klonlanacak.
               </Card.Text>
               <Badge bg={contentMethod === 'new' ? 'danger' : 'secondary'}>
                 {contentMethod === 'new' ? 'Seçildi' : 'Seç'}
@@ -268,7 +351,7 @@ const ContentSource: React.FC<ContentSourceProps> = ({ onNext, onBack }) => {
           style={{backgroundColor: '#986277', borderColor: '#986277'}}
         >
           <i className="fas fa-arrow-right me-2"></i>
-          Devam Et
+          {isCloneMode ? 'Site Klonla' : 'Devam Et'}
         </Button>
       </div>
 

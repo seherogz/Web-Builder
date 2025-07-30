@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { 
   Row, 
   Col, 
@@ -10,6 +10,7 @@ import {
   Modal
 } from 'react-bootstrap';
 import { WebsiteBuilderResponse } from '../types';
+import { BACKEND_BASE_URL } from '../services/api';
 
 interface WebsitePreviewProps {
   response: WebsiteBuilderResponse | null;
@@ -20,6 +21,14 @@ interface WebsitePreviewProps {
 const WebsitePreview: React.FC<WebsitePreviewProps> = ({ response, loading, onReset }) => {
   const [showPreview, setShowPreview] = useState(false);
   const [showCode, setShowCode] = useState(false);
+  const previewRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (showPreview && response && previewRef.current) {
+      // HTML içeriğini doğrudan render et
+      previewRef.current.innerHTML = response.htmlContent;
+    }
+  }, [showPreview, response]);
 
   const downloadHtml = () => {
     if (!response) return;
@@ -58,6 +67,12 @@ const WebsitePreview: React.FC<WebsitePreviewProps> = ({ response, loading, onRe
           style={{backgroundColor: '#ff8386'}}
         />
         <p style={{color: '#913856', fontSize: '1.1rem'}}>Lütfen bekleyin, website hazırlanıyor.</p>
+        <p style={{color: '#986277', fontSize: '0.9rem'}}>
+          {response?.templateName === 'url_cloned' 
+            ? 'Site klonlanıyor ve otel bilgileri güncelleniyor...' 
+            : 'Website oluşturuluyor...'
+          }
+        </p>
       </div>
     );
   }
@@ -82,17 +97,49 @@ const WebsitePreview: React.FC<WebsitePreviewProps> = ({ response, loading, onRe
   return (
     <div>
       <div className="text-center mb-4">
-              <h2 style={{color: '#4c3949', fontWeight: 'bold'}}>Adım 3: Website Önizleme</h2>
-      <p style={{color: '#664960', fontSize: '1.1rem'}}>Oluşturulan website'ı inceleyin ve indirin</p>
+        <h2 style={{color: '#4c3949', fontWeight: 'bold'}}>
+          {response.templateName === 'cloned' ? 'Adım 3: Site Klonlama Sonucu' : 'Adım 3: Website Önizleme'}
+        </h2>
+        <p style={{color: '#664960', fontSize: '1.1rem'}}>
+          {response.templateName === 'cloned' 
+            ? 'Klonlanan site başarıyla oluşturuldu' 
+            : 'Oluşturulan website\'ı inceleyin ve indirin'
+          }
+        </p>
       </div>
+
+      {response.templateName === 'cloned' && (
+        <Alert variant="success" className="mb-4">
+          <h4>✅ Site Başarıyla Klonlandı!</h4>
+          <p><strong>Otel:</strong> {response.websiteKeys.hotelname}</p>
+          <p><strong>Site URL:</strong> <a 
+            href={`${BACKEND_BASE_URL}${response.outputPath}`} 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            style={{
+              color: '#0066cc', 
+              textDecoration: 'underline',
+              fontWeight: 'bold',
+              cursor: 'pointer'
+            }}
+            onMouseOver={(e) => (e.target as HTMLElement).style.color = '#003366'}
+            onMouseOut={(e) => (e.target as HTMLElement).style.color = '#0066cc'}
+          >
+            {response.outputPath}
+          </a></p>
+          <p><strong>Mesaj:</strong> Site başarıyla klonlandı ve otel bilgileri güncellendi.</p>
+        </Alert>
+      )}
 
       <Row className="mb-4">
         <Col md={6}>
-                <Card style={{backgroundColor: 'rgba(229, 187, 177, 0.9)', borderColor: '#986277', boxShadow: '0 4px 15px rgba(76, 57, 73, 0.2)'}}>
-        <Card.Header style={{backgroundColor: '#4c3949', color: '#e5bbb1', borderBottom: '2px solid #986277'}}>
-          <h5 className="mb-0" style={{fontWeight: 'bold'}}>Website Bilgileri</h5>
-        </Card.Header>
-        <Card.Body style={{color: '#4c3949', backgroundColor: 'rgba(229, 187, 177, 0.7)'}}>
+          <Card style={{backgroundColor: 'rgba(229, 187, 177, 0.9)', borderColor: '#986277', boxShadow: '0 4px 15px rgba(76, 57, 73, 0.2)'}}>
+            <Card.Header style={{backgroundColor: '#4c3949', color: '#e5bbb1', borderBottom: '2px solid #986277'}}>
+              <h5 className="mb-0" style={{fontWeight: 'bold'}}>
+                {response.templateName === 'cloned' ? 'Klonlanan Site Bilgileri' : 'Website Bilgileri'}
+              </h5>
+            </Card.Header>
+            <Card.Body style={{color: '#4c3949', backgroundColor: 'rgba(229, 187, 177, 0.7)'}}>
               <div className="mb-3">
                 <strong>Otel Adı:</strong> {response.websiteKeys.hotelname || 'Belirtilmemiş'}
               </div>
@@ -114,7 +161,7 @@ const WebsitePreview: React.FC<WebsitePreviewProps> = ({ response, loading, onRe
                   padding: '6px 12px',
                   borderRadius: '15px'
                 }} className="ms-2 text-capitalize">
-                  {response.templateName}
+                  {response.templateName === 'cloned' ? 'Klonlanan Site' : response.templateName}
                 </Badge>
               </div>
             </Card.Body>
@@ -221,10 +268,14 @@ const WebsitePreview: React.FC<WebsitePreviewProps> = ({ response, loading, onRe
           <Modal.Title>Website Önizleme</Modal.Title>
         </Modal.Header>
         <Modal.Body className="p-0">
-          <iframe
-            srcDoc={response.htmlContent}
-            style={{ width: '100%', height: '80vh', border: 'none' }}
-            title="Website Preview"
+          <div 
+            ref={previewRef}
+            style={{ 
+              width: '100%', 
+              height: '80vh', 
+              border: 'none',
+              overflow: 'auto'
+            }}
           />
         </Modal.Body>
         <Modal.Footer style={{backgroundColor: '#e5bbb1'}}>

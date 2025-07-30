@@ -10,11 +10,14 @@ namespace HotelWebsiteBuilder.Services
         /// </summary>
         public static string UpdateElementById(this string html, string elementId, string newContent)
         {
-            var pattern = $@"<[^>]*id\s*=\s*[""']{Regex.Escape(elementId)}[""'][^>]*>(.*?)</[^>]*>";
-            var replacement = $"<div id=\"{elementId}\">{newContent}</div>";
+            // Önce mevcut element'i bul ve içeriğini güncelle
+            var pattern = $@"<([^>]*)\s+id\s*=\s*[""']{Regex.Escape(elementId)}[""'][^>]*>(.*?)</[^>]*>";
+            var match = Regex.Match(html, pattern, RegexOptions.IgnoreCase | RegexOptions.Singleline);
             
-            if (Regex.IsMatch(html, pattern, RegexOptions.IgnoreCase | RegexOptions.Singleline))
+            if (match.Success)
             {
+                var tagName = match.Groups[1].Value.Split(' ')[0]; // İlk tag adını al
+                var replacement = $"<{tagName} id=\"{elementId}\">{newContent}</{tagName}>";
                 return Regex.Replace(html, pattern, replacement, RegexOptions.IgnoreCase | RegexOptions.Singleline);
             }
             

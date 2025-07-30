@@ -70,4 +70,12 @@ export interface TemplateGenerationRequest {
 export interface UrlGenerationRequest {
   hotelId: number;
   sourceUrl: string;
+}
+
+export interface CloneResponse {
+  success: boolean;
+  siteUrl?: string;
+  hotelName?: string;
+  outputDirectory?: string;
+  message?: string;
 } 

@@ -6,6 +6,7 @@ namespace HotelWebsiteBuilder.Services
     public interface IHtmlAnalysisService
     {
         Task<string> AnalyzeAndExtractStructure(string url);
+        Task<WebsiteKeys?> AnalyzeAndExtractHotelData(string url);
         string UpdateHtmlWithWebsiteKeys(string htmlContent, WebsiteKeys websiteKeys);
     }
 
@@ -22,22 +23,183 @@ namespace HotelWebsiteBuilder.Services
         {
             try
             {
+                Console.WriteLine($"URL'den HTML alınıyor: {url}");
                 var response = await _httpClient.GetAsync(url);
                 response.EnsureSuccessStatusCode();
                 
                 var htmlContent = await response.Content.ReadAsStringAsync();
+                Console.WriteLine($"HTML alındı, uzunluk: {htmlContent.Length}");
+                
                 var doc = new HtmlDocument();
                 doc.LoadHtml(htmlContent);
 
-                // Temel otel web sitesi yapısını oluştur
-                var templateHtml = CreateHotelTemplateStructure();
+                // URL'den gelen gerçek HTML'i döndür, default template değil
+                return htmlContent;
+            }
+            catch (Exception ex)
+            {
+                // Hata durumunda varsayılan şablon döndür
+                Console.WriteLine($"URL'den HTML alınamadı: {ex.Message}");
+                return CreateDefaultHotelTemplate();
+            }
+        }
+
+        public async Task<WebsiteKeys?> AnalyzeAndExtractHotelData(string url)
+        {
+            try
+            {
+                var response = await _httpClient.GetAsync(url);
+                response.EnsureSuccessStatusCode();
+                var htmlContent = await response.Content.ReadAsStringAsync();
                 
-                return templateHtml;
+                var doc = new HtmlDocument();
+                doc.LoadHtml(htmlContent);
+
+                var websiteKeys = new WebsiteKeys();
+
+                // Otel adını çıkar
+                var titleElement = doc.DocumentNode.SelectSingleNode("//title");
+                if (titleElement != null)
+                {
+                    var title = titleElement.InnerText.Trim();
+                    if (title.Contains("Hotel") || title.Contains("Otel") || title.Contains("Resort"))
+                    {
+                        websiteKeys.hotelname = title;
+                    }
+                }
+
+                // H1 etiketlerinden otel adını çıkar
+                var h1Elements = doc.DocumentNode.SelectNodes("//h1");
+                if (h1Elements != null)
+                {
+                    foreach (var h1 in h1Elements)
+                    {
+                        var text = h1.InnerText.Trim();
+                        if (text.Contains("Hotel") || text.Contains("Otel") || text.Contains("Resort"))
+                        {
+                            websiteKeys.hotelname = text;
+                            break;
+                        }
+                    }
+                }
+
+                // Telefon numarasını çıkar
+                var phoneElements = doc.DocumentNode.SelectNodes("//a[contains(@href, 'tel:')]");
+                if (phoneElements != null)
+                {
+                    foreach (var phone in phoneElements)
+                    {
+                        var href = phone.GetAttributeValue("href", "");
+                        if (href.StartsWith("tel:"))
+                        {
+                            websiteKeys.phone = href.Replace("tel:", "");
+                            break;
+                        }
+                    }
+                }
+
+                // E-posta adresini çıkar
+                var emailElements = doc.DocumentNode.SelectNodes("//a[contains(@href, 'mailto:')]");
+                if (emailElements != null)
+                {
+                    foreach (var email in emailElements)
+                    {
+                        var href = email.GetAttributeValue("href", "");
+                        if (href.StartsWith("mailto:"))
+                        {
+                            websiteKeys.email = href.Replace("mailto:", "");
+                            break;
+                        }
+                    }
+                }
+
+                // Adres bilgisini çıkar
+                var addressElements = doc.DocumentNode.SelectNodes("//address");
+                if (addressElements != null)
+                {
+                    foreach (var address in addressElements)
+                    {
+                        var addressText = address.InnerText.Trim();
+                        if (!string.IsNullOrEmpty(addressText))
+                        {
+                            websiteKeys.address = addressText;
+                            break;
+                        }
+                    }
+                }
+
+                // Logo URL'sini çıkar
+                var logoElements = doc.DocumentNode.SelectNodes("//img[contains(@class, 'logo') or contains(@alt, 'logo') or contains(@alt, 'Logo')]");
+                if (logoElements != null)
+                {
+                    foreach (var logo in logoElements)
+                    {
+                        var src = logo.GetAttributeValue("src", "");
+                        if (!string.IsNullOrEmpty(src))
+                        {
+                            websiteKeys.logourl = src;
+                            break;
+                        }
+                    }
+                }
+
+                // Galeri resimlerini çıkar
+                var galleryElements = doc.DocumentNode.SelectNodes("//img[contains(@class, 'gallery') or contains(@class, 'slider') or contains(@alt, 'hotel')]");
+                if (galleryElements != null)
+                {
+                    var imageUrls = new List<string>();
+                    foreach (var img in galleryElements.Take(5))
+                    {
+                        var src = img.GetAttributeValue("src", "");
+                        if (!string.IsNullOrEmpty(src))
+                        {
+                            imageUrls.Add(src);
+                        }
+                    }
+
+                    if (imageUrls.Count > 0) websiteKeys.galleryimage1 = imageUrls[0];
+                    if (imageUrls.Count > 1) websiteKeys.galleryimage2 = imageUrls[1];
+                    if (imageUrls.Count > 2) websiteKeys.galleryimage3 = imageUrls[2];
+                    if (imageUrls.Count > 3) websiteKeys.galleryimage4 = imageUrls[3];
+                    if (imageUrls.Count > 4) websiteKeys.galleryimage5 = imageUrls[4];
+                }
+
+                // Sosyal medya linklerini çıkar
+                var socialElements = doc.DocumentNode.SelectNodes("//a[contains(@href, 'facebook.com') or contains(@href, 'instagram.com') or contains(@href, 'twitter.com')]");
+                if (socialElements != null)
+                {
+                    foreach (var social in socialElements)
+                    {
+                        var href = social.GetAttributeValue("href", "");
+                        if (href.Contains("facebook.com"))
+                            websiteKeys.facebook = href;
+                        else if (href.Contains("instagram.com"))
+                            websiteKeys.instagram = href;
+                        else if (href.Contains("twitter.com"))
+                            websiteKeys.twitter = href;
+                    }
+                }
+
+                // Açıklama metnini çıkar
+                var descriptionElements = doc.DocumentNode.SelectNodes("//p[contains(@class, 'description') or contains(@class, 'about')]");
+                if (descriptionElements != null)
+                {
+                    foreach (var desc in descriptionElements)
+                    {
+                        var text = desc.InnerText.Trim();
+                        if (text.Length > 50 && text.Length < 500)
+                        {
+                            websiteKeys.description = text;
+                            break;
+                        }
+                    }
+                }
+
+                return websiteKeys;
             }
             catch (Exception)
             {
-                // Hata durumunda varsayılan şablon döndür
-                return CreateDefaultHotelTemplate();
+                return null;
             }
         }
 
@@ -75,7 +237,52 @@ namespace HotelWebsiteBuilder.Services
                 }
             }
 
-            return doc.DocumentNode.OuterHtml;
+            // Placeholder metinleri de güncelle
+            var updatedHtml = doc.DocumentNode.OuterHtml;
+            
+            if (!string.IsNullOrEmpty(websiteKeys.hotelname))
+            {
+                updatedHtml = updatedHtml.Replace("Otel Adı", websiteKeys.hotelname);
+                updatedHtml = updatedHtml.Replace("{{HOTEL_NAME}}", websiteKeys.hotelname);
+            }
+            
+            if (!string.IsNullOrEmpty(websiteKeys.phone))
+            {
+                updatedHtml = updatedHtml.Replace("Telefon numarası", websiteKeys.phone);
+                updatedHtml = updatedHtml.Replace("{{PHONE}}", websiteKeys.phone);
+            }
+            
+            if (!string.IsNullOrEmpty(websiteKeys.email))
+            {
+                updatedHtml = updatedHtml.Replace("E-posta adresi", websiteKeys.email);
+                updatedHtml = updatedHtml.Replace("{{EMAIL}}", websiteKeys.email);
+            }
+            
+            if (!string.IsNullOrEmpty(websiteKeys.address))
+            {
+                updatedHtml = updatedHtml.Replace("Adres bilgisi", websiteKeys.address);
+                updatedHtml = updatedHtml.Replace("{{ADDRESS}}", websiteKeys.address);
+            }
+            
+            if (!string.IsNullOrEmpty(websiteKeys.description))
+            {
+                updatedHtml = updatedHtml.Replace("Otel açıklaması buraya gelecek", websiteKeys.description);
+                updatedHtml = updatedHtml.Replace("{{DESCRIPTION}}", websiteKeys.description);
+            }
+            
+            if (!string.IsNullOrEmpty(websiteKeys.amenities))
+            {
+                updatedHtml = updatedHtml.Replace("Özellikler listesi buraya gelecek", websiteKeys.amenities);
+                updatedHtml = updatedHtml.Replace("{{AMENITIES}}", websiteKeys.amenities);
+            }
+            
+            if (!string.IsNullOrEmpty(websiteKeys.pricing))
+            {
+                updatedHtml = updatedHtml.Replace("Fiyat bilgisi", websiteKeys.pricing);
+                updatedHtml = updatedHtml.Replace("{{PRICING}}", websiteKeys.pricing);
+            }
+
+            return updatedHtml;
         }
 
         private void UpdateElement(HtmlNode element, string value)
