@@ -12,7 +12,7 @@ WORKDIR "/src/."
 RUN dotnet build "HotelWebsiteBuilder.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "HotelWebsiteBuilder.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "HotelWebsiteBuilder.csproj" -c Release -o /app/publish /p:UseAppHost=false /p:StaticWebAssetsEnabled=false
 
 FROM base AS final
 WORKDIR /app

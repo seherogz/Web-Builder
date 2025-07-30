@@ -27,25 +27,17 @@ builder.Services.AddCors(options =>
 builder.Services.AddHttpClient();
 
 // Add Entity Framework
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-if (string.IsNullOrEmpty(connectionString))
-{
-    // Fallback to in-memory database for development
-    builder.Services.AddDbContext<ApplicationDbContext>(options =>
-        options.UseInMemoryDatabase("HotelWebsiteBuilderDb"));
-}
-else
-{
-    // Use PostgreSQL
-    builder.Services.AddDbContext<ApplicationDbContext>(options =>
-        options.UseNpgsql(connectionString));
-}
+// Always use in-memory database for development
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseInMemoryDatabase("HotelWebsiteBuilderDb"));
 
 // Add Services
 builder.Services.AddScoped<IHotelService, HotelService>();
 builder.Services.AddScoped<ITemplateService, TemplateService>();
 builder.Services.AddScoped<IHtmlAnalysisService, HtmlAnalysisService>();
 builder.Services.AddScoped<IHtmlUpdateService, HtmlUpdateService>();
+builder.Services.AddScoped<SiteCloneService>();
+builder.Services.AddScoped<HotelSiteCloneService>();
 
 var app = builder.Build();
 
