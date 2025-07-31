@@ -25,7 +25,7 @@ namespace HotelWebsiteBuilder.Models
                             {
                                 Id = 1,
                                 HotelName = "Grand Istanbul Hotel",
-                                LogoUrl = "https://via.placeholder.com/200x80?text=Grand+Istanbul",
+                                LogoUrl = "https://static.rfstat.com/renderforest/images/v2/landing-pics/logo_landing/hotel/hotel_logos_1.png",
                                 Phone = "+90 212 555 0123",
                                 Email = "info@grandistanbul.com",
                                 Address = "Sultanahmet Meydanı No:1, İstanbul, Türkiye",
@@ -37,22 +37,22 @@ namespace HotelWebsiteBuilder.Models
                     Language = "tr",
                     
                     // Gallery images as JSON
-                    GalleryImagesJson = JsonSerializer.Serialize(new List<string>
-                    {
-                        "https://via.placeholder.com/800x600?text=Istanbul+View",
-                        "https://via.placeholder.com/800x600?text=Hotel+Lobby",
-                        "https://via.placeholder.com/800x600?text=Deluxe+Room",
-                        "https://via.placeholder.com/800x600?text=Restaurant",
-                        "https://via.placeholder.com/800x600?text=Spa+Center"
-                    }),
+                   GalleryImagesJson = JsonSerializer.Serialize(new List<string>
+{
+    "https://images.unsplash.com/photo-1604147706283-00161d98d79f?auto=format&fit=crop&w=800&q=80", // Istanbul View
+    "https://images.unsplash.com/photo-1590490360180-6947a630cfba?auto=format&fit=crop&w=800&q=80", // Hotel Lobby
+    "https://images.unsplash.com/photo-1560185127-6ed189bf8d9b?auto=format&fit=crop&w=800&q=80", // Deluxe Room
+    "https://images.unsplash.com/photo-1590490359227-7ad9f4f6a255?auto=format&fit=crop&w=800&q=80", // Restaurant
+    "https://images.unsplash.com/photo-1583127752711-2c0b9cce1935?auto=format&fit=crop&w=800&q=80"  // Spa Center
+}),
                     
                     // Slider images as JSON
-                    SliderImagesJson = JsonSerializer.Serialize(new List<string>
-                    {
-                        "https://via.placeholder.com/1200x600?text=Grand+Istanbul+Slider+1",
-                        "https://via.placeholder.com/1200x600?text=Grand+Istanbul+Slider+2",
-                        "https://via.placeholder.com/1200x600?text=Grand+Istanbul+Slider+3"
-                    }),
+                   SliderImagesJson = JsonSerializer.Serialize(new List<string>
+{
+    "https://images.unsplash.com/photo-1629693685469-81fc0b2ea1c4?auto=format&fit=crop&w=1200&q=80",
+    "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=1200&q=80",
+    "https://images.unsplash.com/photo-1501117716987-c8e1ecb210d1?auto=format&fit=crop&w=1200&q=80"
+}),
                     
                     // Social media
                     Facebook = "https://facebook.com/grandistanbulhotel",
@@ -80,8 +80,11 @@ namespace HotelWebsiteBuilder.Models
                             Description = "Konforlu ve şık standart odalarımızda rahat bir konaklama deneyimi.",
                             Price = 1200,
                             Features = new List<string> { "Klima", "TV", "Mini bar", "Wi-Fi" },
-                            Images = new List<string> { "standart1.jpg", "standart2.jpg" },
-                            Capacity = 2,
+Images = new List<string>
+{
+    "https://images.unsplash.com/photo-1600585154780-14eebc18c30e?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1600585154262-fb6e4c0c0c88?auto=format&fit=crop&w=800&q=80"
+},                            Capacity = 2,
                             IsAvailable = true
                         },
                         new HotelRoom
@@ -90,8 +93,11 @@ namespace HotelWebsiteBuilder.Models
                             Description = "Geniş ve lüks deluxe odalarımızda şehir manzarası eşliğinde konaklama.",
                             Price = 1800,
                             Features = new List<string> { "Klima", "TV", "Mini bar", "Wi-Fi", "Şehir Manzarası" },
-                            Images = new List<string> { "deluxe1.jpg", "deluxe2.jpg" },
-                            Capacity = 2,
+Images = new List<string>
+{
+    "https://images.unsplash.com/photo-1616044951790-43e65c295f67?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1600585154661-f0bb4bdfb2d8?auto=format&fit=crop&w=800&q=80"
+},                           Capacity = 2,
                             IsAvailable = true
                         },
                         new HotelRoom
@@ -100,8 +106,11 @@ namespace HotelWebsiteBuilder.Models
                             Description = "Lüks süit odalarımızda ayrı oturma alanı ve jakuzi ile konforlu konaklama.",
                             Price = 2800,
                             Features = new List<string> { "Klima", "TV", "Mini bar", "Wi-Fi", "Jakuzi", "Oturma Alanı" },
-                            Images = new List<string> { "suit1.jpg", "suit2.jpg" },
-                            Capacity = 3,
+Images = new List<string>
+{
+    "https://images.unsplash.com/photo-1576675783381-d26b7b16fba9?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1616627894424-91e9fd08c429?auto=format&fit=crop&w=800&q=80"
+},                            Capacity = 3,
                             IsAvailable = true
                         },
                         new HotelRoom
@@ -159,14 +168,12 @@ namespace HotelWebsiteBuilder.Models
                     Longitude = 28.9784,
                     
                     // Legacy fields for backward compatibility
-                                GalleryImage1 = "https://via.placeholder.com/800x600?text=Istanbul+View",
-                                GalleryImage2 = "https://via.placeholder.com/800x600?text=Hotel+Lobby",
-                                GalleryImage3 = "https://via.placeholder.com/800x600?text=Deluxe+Room",
-                                GalleryImage4 = "https://via.placeholder.com/800x600?text=Restaurant",
-                                GalleryImage5 = "https://via.placeholder.com/800x600?text=Spa+Center",
-                                RoomTypes = "Standart Oda, Deluxe Oda, Süit Oda, Başkanlık Süiti",
-                                Pricing = "Standart: 1200 TL/gece, Deluxe: 1800 TL/gece, Süit: 2800 TL/gece, Başkanlık: 5000 TL/gece"
-                            },
+                                GalleryImage1 = "https://images.unsplash.com/photo-1604147706283-00161d98d79f?auto=format&fit=crop&w=800&q=80",
+GalleryImage2 = "https://images.unsplash.com/photo-1590490360180-6947a630cfba?auto=format&fit=crop&w=800&q=80",
+GalleryImage3 = "https://images.unsplash.com/photo-1560185127-6ed189bf8d9b?auto=format&fit=crop&w=800&q=80",
+GalleryImage4 = "https://images.unsplash.com/photo-1590490359227-7ad9f4f6a255?auto=format&fit=crop&w=800&q=80",
+GalleryImage5 = "https://images.unsplash.com/photo-1583127752711-2c0b9cce1935?auto=format&fit=crop&w=800&q=80"
+                    },
                             new Hotel
                             {
                                 Id = 2,
@@ -860,4 +867,4 @@ namespace HotelWebsiteBuilder.Models
                         );
                     }
     }
-} 
+}

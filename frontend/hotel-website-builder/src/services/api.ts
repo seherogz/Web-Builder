@@ -7,8 +7,8 @@ import {
   UrlGenerationRequest
 } from '../types';
 
-const API_BASE_URL = 'http://localhost:5000/api';
-const BACKEND_BASE_URL = 'http://localhost:5000';
+const API_BASE_URL = 'http://localhost:5001/api';
+const BACKEND_BASE_URL = 'http://localhost:5001';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -93,6 +93,15 @@ export const websiteBuilderApi = {
   // Otelleri getir
   getHotels: async (): Promise<Hotel[]> => {
     const response = await api.get<Hotel[]>('/hotels');
+    return response.data;
+  },
+
+  // Tam site çıkarma (HTML, CSS, JS dahil)
+  extractFullSite: async (url: string, hotelData: any): Promise<any> => {
+    const response = await api.post('/websitebuilder/extract-full-site', {
+      url: url,
+      hotelData: hotelData
+    });
     return response.data;
   },
 };

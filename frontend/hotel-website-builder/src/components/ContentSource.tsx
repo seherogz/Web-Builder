@@ -12,7 +12,6 @@ import {
   Modal
 } from 'react-bootstrap';
 import { hotelsApi } from '../services/api';
-import api from '../services/api';
 import { Hotel, WebsiteKeys } from '../types';
 
 interface ContentSourceProps {
@@ -131,6 +130,8 @@ const ContentSource: React.FC<ContentSourceProps> = ({ onNext, onBack, isCloneMo
     }
   };
 
+
+
   const handleClone = async () => {
     if (!sourceUrl.trim()) {
       setError('Kaynak URL bulunamadı.');
@@ -153,34 +154,20 @@ const ContentSource: React.FC<ContentSourceProps> = ({ onNext, onBack, isCloneMo
     try {
       const { websiteBuilderApi } = await import('../services/api');
       
-      let response;
+      console.log('Site klonlama başlatılıyor (CSS, JS, resim dosyaları dahil):', sourceUrl.trim());
       
-      if (contentMethod === 'existing' && selectedHotel) {
-        // Mevcut otel ile klonlama (yeni endpoint)
-        console.log('Klonlama başlatılıyor:', {
-          hotelId: selectedHotel.id,
-          sourceUrl: sourceUrl.trim(),
-          hotelName: selectedHotel.hotelName
-        });
-        
-        response = await websiteBuilderApi.generateFromUrlClone({
-          hotelId: selectedHotel.id,
-          sourceUrl: sourceUrl.trim()
-        });
-      } else {
-        // Yeni otel ile klonlama
-        response = await websiteBuilderApi.cloneFromUrl(sourceUrl.trim(), hotelData);
-      }
+      // CSS, JS ve resim dosyalarını da indiren tam site çıkarma API'sini kullan
+      const response = await websiteBuilderApi.extractFullSite(sourceUrl.trim(), hotelData);
 
-      console.log('Klonlama sonucu:', response);
+      console.log('Site klonlama sonucu:', response);
 
-      if (response.outputPath) {
+      if (response.success) {
         // Başarılı klonlama sonrası preview'e git
         onNext(selectedHotel, hotelData, {
           success: true,
           siteUrl: response.outputPath,
           hotelName: selectedHotel?.hotelName || hotelData.hotelname,
-          message: 'Site başarıyla klonlandı'
+          message: 'Site başarıyla klonlandı (CSS, JS ve resim dosyaları dahil)'
         });
       } else {
         setError('Site klonlanırken bir hata oluştu');
@@ -210,11 +197,7 @@ const ContentSource: React.FC<ContentSourceProps> = ({ onNext, onBack, isCloneMo
             : 'Otel bilgilerini nasıl gireceğinizi seçin'
           }
         </p>
-        {isCloneMode && sourceUrl && (
-          <Alert variant="info" className="mt-3">
-            <strong>Kaynak URL:</strong> {sourceUrl}
-          </Alert>
-        )}
+
       </div>
 
       {error && (
@@ -343,16 +326,18 @@ const ContentSource: React.FC<ContentSourceProps> = ({ onNext, onBack, isCloneMo
           <i className="fas fa-arrow-left me-2"></i>
           Geri
         </Button>
-        <Button 
-          variant="danger" 
-          size="lg" 
-          onClick={handleNext}
-          disabled={loading}
-          style={{backgroundColor: '#986277', borderColor: '#986277'}}
-        >
-          <i className="fas fa-arrow-right me-2"></i>
-          {isCloneMode ? 'Site Klonla' : 'Devam Et'}
-        </Button>
+        <div>
+          <Button 
+            variant="danger" 
+            size="lg" 
+            onClick={handleNext}
+            disabled={loading}
+            style={{backgroundColor: '#986277', borderColor: '#986277'}}
+          >
+            <i className="fas fa-arrow-right me-2"></i>
+            {isCloneMode ? 'Site Klonla' : 'Devam Et'}
+          </Button>
+        </div>
       </div>
 
       {/* Yeni Otel Modal */}

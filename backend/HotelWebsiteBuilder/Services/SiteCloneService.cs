@@ -451,7 +451,7 @@ namespace HotelWebsiteBuilder.Services
             }
 
             // Gallery images değiştir
-            var galleryImages = doc.DocumentNode.SelectNodes("//img[contains(@class, 'gallery') or contains(@alt, 'gallery')]");
+            var galleryImages = doc.DocumentNode.SelectNodes("//img[contains(@class, 'gallery') or contains(@alt, 'gallery') or contains(@src, 'gallery') or contains(@class, 'slide') or contains(@class, 'carousel')]");
             if (galleryImages != null && galleryImages.Count > 0)
             {
                 var galleryUrls = new[] { hotelData.galleryimage1, hotelData.galleryimage2, hotelData.galleryimage3, hotelData.galleryimage4, hotelData.galleryimage5 };
@@ -460,6 +460,21 @@ namespace HotelWebsiteBuilder.Services
                 for (int i = 0; i < galleryImages.Count && i < validUrls.Count; i++)
                 {
                     galleryImages[i].SetAttributeValue("src", validUrls[i]);
+                    Console.WriteLine($"Galeri resmi değiştirildi: {galleryImages[i].GetAttributeValue("src", "")} -> {validUrls[i]}");
+                }
+            }
+
+            // Slider images değiştir
+            var sliderImages = doc.DocumentNode.SelectNodes("//img[contains(@class, 'slider') or contains(@class, 'hero') or contains(@class, 'banner') or contains(@alt, 'slider') or contains(@alt, 'hero')]");
+            if (sliderImages != null && sliderImages.Count > 0)
+            {
+                var sliderUrls = new[] { hotelData.galleryimage1, hotelData.galleryimage2, hotelData.galleryimage3, hotelData.galleryimage4, hotelData.galleryimage5 };
+                var validUrls = sliderUrls.Where(url => !string.IsNullOrEmpty(url)).ToList();
+                
+                for (int i = 0; i < sliderImages.Count && i < validUrls.Count; i++)
+                {
+                    sliderImages[i].SetAttributeValue("src", validUrls[i]);
+                    Console.WriteLine($"Slider resmi değiştirildi: {sliderImages[i].GetAttributeValue("src", "")} -> {validUrls[i]}");
                 }
             }
 
@@ -1284,7 +1299,7 @@ namespace HotelWebsiteBuilder.Services
             var assetsDir = Path.Combine(outputDir, "assets");
             Directory.CreateDirectory(assetsDir);
 
-            // CSS dosyalarını indir - sadece otel ile ilgili olanları
+            // CSS dosyalarını indir
             var cssLinks = doc.DocumentNode.SelectNodes("//link[@rel='stylesheet']");
             if (cssLinks != null)
             {
@@ -1293,17 +1308,13 @@ namespace HotelWebsiteBuilder.Services
                     var href = link.GetAttributeValue("href", "");
                     if (!string.IsNullOrEmpty(href))
                     {
-                        // Sadece otel ile ilgili CSS dosyalarını indir
-                        if (ShouldDownloadAsset(href))
-                        {
-                            var localPath = await DownloadAsset(href, assetsDir, "css");
-                            link.SetAttributeValue("href", localPath);
-                        }
+                        var localPath = await DownloadAsset(href, assetsDir, "css");
+                        link.SetAttributeValue("href", localPath);
                     }
                 }
             }
 
-            // JS dosyalarını indir - sadece otel ile ilgili olanları
+            // JS dosyalarını indir
             var scriptTags = doc.DocumentNode.SelectNodes("//script[@src]");
             if (scriptTags != null)
             {
@@ -1312,17 +1323,13 @@ namespace HotelWebsiteBuilder.Services
                     var src = script.GetAttributeValue("src", "");
                     if (!string.IsNullOrEmpty(src))
                     {
-                        // Sadece otel ile ilgili JS dosyalarını indir
-                        if (ShouldDownloadAsset(src))
-                        {
-                            var localPath = await DownloadAsset(src, assetsDir, "js");
-                            script.SetAttributeValue("src", localPath);
-                        }
+                        var localPath = await DownloadAsset(src, assetsDir, "js");
+                        script.SetAttributeValue("src", localPath);
                     }
                 }
             }
 
-            // Resimleri indir - sadece otel ile ilgili olanları
+            // Resimleri indir
             var images = doc.DocumentNode.SelectNodes("//img[@src]");
             if (images != null)
             {
@@ -1331,12 +1338,23 @@ namespace HotelWebsiteBuilder.Services
                     var src = img.GetAttributeValue("src", "");
                     if (!string.IsNullOrEmpty(src))
                     {
-                        // Sadece otel ile ilgili resimleri indir
-                        if (ShouldDownloadAsset(src))
-                        {
-                            var localPath = await DownloadAsset(src, assetsDir, "images");
-                            img.SetAttributeValue("src", localPath);
-                        }
+                        var localPath = await DownloadAsset(src, assetsDir, "images");
+                        img.SetAttributeValue("src", localPath);
+                    }
+                }
+            }
+
+            // Font dosyalarını indir
+            var fontLinks = doc.DocumentNode.SelectNodes("//link[@rel='preload' and @as='font']");
+            if (fontLinks != null)
+            {
+                foreach (var link in fontLinks)
+                {
+                    var href = link.GetAttributeValue("href", "");
+                    if (!string.IsNullOrEmpty(href))
+                    {
+                        var localPath = await DownloadAsset(href, assetsDir, "fonts");
+                        link.SetAttributeValue("href", localPath);
                     }
                 }
             }
@@ -1351,6 +1369,24 @@ namespace HotelWebsiteBuilder.Services
 
             var lowerUrl = url.ToLower();
             
+            // CSS, JS, resim dosyalarını her zaman indir
+            if (lowerUrl.EndsWith(".css") || lowerUrl.EndsWith(".js") || 
+                lowerUrl.EndsWith(".png") || lowerUrl.EndsWith(".jpg") || 
+                lowerUrl.EndsWith(".jpeg") || lowerUrl.EndsWith(".gif") || 
+                lowerUrl.EndsWith(".svg") || lowerUrl.EndsWith(".ico") ||
+                lowerUrl.EndsWith(".woff") || lowerUrl.EndsWith(".woff2") ||
+                lowerUrl.EndsWith(".ttf") || lowerUrl.EndsWith(".eot"))
+            {
+                return true;
+            }
+
+            // CDN dosyalarını da indir
+            if (lowerUrl.Contains("cdn") || lowerUrl.Contains("static") || 
+                lowerUrl.Contains("assets") || lowerUrl.Contains("files"))
+            {
+                return true;
+            }
+
             // Otel ile ilgili olabilecek domain'ler
             var hotelDomains = new[] { 
                 "royaltyezel.com", "hotel", "otel", "resort", "boutique", 
@@ -1375,16 +1411,6 @@ namespace HotelWebsiteBuilder.Services
                 return true;
             }
 
-            // Font dosyaları ve genel CSS/JS dosyaları için özel kontrol
-            if (lowerUrl.Contains("font") || lowerUrl.Contains("css") || lowerUrl.Contains("js"))
-            {
-                // Sadece otel domain'inden gelen font dosyalarını indir
-                if (hotelDomains.Any(domain => lowerUrl.Contains(domain)))
-                {
-                    return true;
-                }
-            }
-
             return false;
         }
 
@@ -1399,10 +1425,16 @@ namespace HotelWebsiteBuilder.Services
                     url = new Uri(new Uri("https://example.com"), url).ToString();
                 }
 
-                var fileName = Path.GetFileName(url);
-                if (string.IsNullOrEmpty(fileName))
+                // URL'den dosya adını al
+                var uri = new Uri(url);
+                var fileName = Path.GetFileName(uri.LocalPath);
+                
+                // Eğer dosya adı yoksa veya geçersizse, URL'den türet
+                if (string.IsNullOrEmpty(fileName) || fileName.Contains("?"))
                 {
-                    fileName = Guid.NewGuid().ToString() + ".file";
+                    var urlHash = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(url))
+                        .Replace("/", "_").Replace("+", "-").Replace("=", "");
+                    fileName = $"{urlHash}.{GetFileExtension(url)}";
                 }
 
                 var localDir = Path.Combine(assetsDir, subDir);
@@ -1417,6 +1449,11 @@ namespace HotelWebsiteBuilder.Services
                     await File.WriteAllBytesAsync(localPath, content);
                     Console.WriteLine($"Asset indirildi: {url} -> {localPath}");
                 }
+                else
+                {
+                    Console.WriteLine($"Asset indirilemedi: {url}, Status: {response.StatusCode}");
+                    return url; // Orijinal URL'yi koru
+                }
 
                 return $"assets/{subDir}/{fileName}";
             }
@@ -1425,6 +1462,23 @@ namespace HotelWebsiteBuilder.Services
                 Console.WriteLine($"Asset indirilemedi: {url}, Hata: {ex.Message}");
                 return url; // Orijinal URL'yi koru
             }
+        }
+
+        private string GetFileExtension(string url)
+        {
+            var lowerUrl = url.ToLower();
+            if (lowerUrl.Contains(".css")) return "css";
+            if (lowerUrl.Contains(".js")) return "js";
+            if (lowerUrl.Contains(".png")) return "png";
+            if (lowerUrl.Contains(".jpg") || lowerUrl.Contains(".jpeg")) return "jpg";
+            if (lowerUrl.Contains(".gif")) return "gif";
+            if (lowerUrl.Contains(".svg")) return "svg";
+            if (lowerUrl.Contains(".ico")) return "ico";
+            if (lowerUrl.Contains(".woff")) return "woff";
+            if (lowerUrl.Contains(".woff2")) return "woff2";
+            if (lowerUrl.Contains(".ttf")) return "ttf";
+            if (lowerUrl.Contains(".eot")) return "eot";
+            return "file";
         }
 
         private void ReplaceDomainUrls(HtmlDocument doc, string newDomain)
