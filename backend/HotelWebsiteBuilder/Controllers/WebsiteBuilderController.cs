@@ -204,7 +204,7 @@ namespace HotelWebsiteBuilder.Controllers
 
                 if (result.Success)
                 {
-                    var baseUrl = _configuration["BaseUrl"] ?? "http://localhost:5000";
+                    var baseUrl = _configuration["BaseUrl"] ?? "http://localhost:5001";
                     return Ok(new WebsiteBuilderResponse
                     {
                         HtmlContent = $"<html><body><h1>Site Başarıyla Klonlandı!</h1><p><strong>Otel:</strong> {result.HotelName}</p><p><strong>Site URL:</strong> <a href='{baseUrl}{result.SiteUrl}' target='_blank'>{result.SiteUrl}</a></p><p><strong>Mesaj:</strong> {result.Message}</p></body></html>",
@@ -411,6 +411,51 @@ namespace HotelWebsiteBuilder.Controllers
                     message = $"Otel sitesi klonlanırken hata oluştu: {ex.Message}"
                 });
             }
+        }
+
+        [HttpPost("extract-full-site")]
+        public async Task<IActionResult> ExtractFullSite([FromBody] ExtractSiteRequest request)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(request.Url))
+                {
+                    return BadRequest("URL gerekli");
+                }
+
+                if (request.HotelData == null)
+                {
+                    return BadRequest("Otel verisi gerekli");
+                }
+
+                Console.WriteLine($"Tam site çıkarma ve uyarlama başlatılıyor: {request.Url}");
+
+                // Site'ı çıkar ve otel bilgilerine uyarla
+                var outputPath = await _htmlAnalysisService.ExtractAndAdaptSite(request.Url, request.HotelData);
+
+                return Ok(new
+                {
+                    success = true,
+                    message = "Site başarıyla çıkarıldı ve otel bilgilerine uyarlandı",
+                    outputPath = outputPath,
+                    fileName = Path.GetFileName(outputPath),
+                    hotelName = request.HotelData.hotelname
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    success = false,
+                    message = $"Site çıkarılırken hata oluştu: {ex.Message}"
+                });
+            }
+        }
+
+        public class ExtractSiteRequest
+        {
+            public string Url { get; set; } = string.Empty;
+            public WebsiteKeys HotelData { get; set; } = new WebsiteKeys();
         }
     }
 } 
