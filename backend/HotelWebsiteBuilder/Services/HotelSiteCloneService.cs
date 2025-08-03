@@ -72,8 +72,15 @@ namespace HotelWebsiteBuilder.Services
                 var finalHtml = await DownloadAndUpdateAssets(doc, hotel.HotelName);
 
                 // 7. Klasörü oluştur ve dosyaları kaydet
-                var outputDir = Path.Combine(_environment.WebRootPath, "sites", CreateSlug(hotel.HotelName));
+                var hotelSlug = CreateSlug(hotel.HotelName);
+                Console.WriteLine($"Hotel slug: {hotelSlug}");
+                Console.WriteLine($"WebRootPath: {_environment.WebRootPath}");
+                
+                var outputDir = Path.Combine(_environment.WebRootPath, "sites", hotelSlug);
+                Console.WriteLine($"Output Directory: {outputDir}");
+                
                 Directory.CreateDirectory(outputDir);
+                Console.WriteLine($"Directory created: {outputDir}");
                 
                 var indexPath = Path.Combine(outputDir, "index.html");
                 await File.WriteAllTextAsync(indexPath, finalHtml);
@@ -81,7 +88,7 @@ namespace HotelWebsiteBuilder.Services
                 Console.WriteLine($"Dosya kaydedildi: {indexPath}");
 
                 // 8. Sonuç URL'ini oluştur
-                var siteUrl = $"/sites/{CreateSlug(hotel.HotelName)}/index.html";
+                var siteUrl = $"/sites/{hotelSlug}/index.html";
                 
                 Console.WriteLine($"Otel sitesi başarıyla klonlandı: {siteUrl}");
                 

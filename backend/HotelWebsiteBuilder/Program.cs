@@ -36,7 +36,7 @@ builder.Services.AddScoped<IHotelService, HotelService>();
 builder.Services.AddScoped<ITemplateService, TemplateService>();
 builder.Services.AddScoped<IHtmlAnalysisService, HtmlAnalysisService>();
 builder.Services.AddScoped<IHtmlUpdateService, HtmlUpdateService>();
-builder.Services.AddScoped<SiteCloneService>();
+// builder.Services.AddScoped<SiteCloneService>(); // Temporarily disabled - file not found
 builder.Services.AddScoped<HotelSiteCloneService>();
 
 var app = builder.Build();

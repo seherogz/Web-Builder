@@ -13,7 +13,6 @@ namespace HotelWebsiteBuilder.Controllers
         private readonly ITemplateService _templateService;
         private readonly IHtmlAnalysisService _htmlAnalysisService;
         private readonly IHtmlUpdateService _htmlUpdateService;
-        private readonly SiteCloneService _siteCloneService;
         private readonly HotelSiteCloneService _hotelSiteCloneService;
         private readonly IWebHostEnvironment _environment;
         private readonly IConfiguration _configuration;
@@ -23,7 +22,6 @@ namespace HotelWebsiteBuilder.Controllers
             ITemplateService templateService,
             IHtmlAnalysisService htmlAnalysisService,
             IHtmlUpdateService htmlUpdateService,
-            SiteCloneService siteCloneService,
             HotelSiteCloneService hotelSiteCloneService,
             IWebHostEnvironment environment,
             IConfiguration configuration)
@@ -32,7 +30,6 @@ namespace HotelWebsiteBuilder.Controllers
             _templateService = templateService;
             _htmlAnalysisService = htmlAnalysisService;
             _htmlUpdateService = htmlUpdateService;
-            _siteCloneService = siteCloneService;
             _hotelSiteCloneService = hotelSiteCloneService;
             _environment = environment;
             _configuration = configuration;
@@ -276,8 +273,10 @@ namespace HotelWebsiteBuilder.Controllers
                 var outputDir = Path.Combine(_environment.WebRootPath, "sites", safeHotelName, "site");
                 Console.WriteLine($"Output directory: {outputDir}");
                 
-                string resultPath;
+                string resultPath = ""; // Temporarily disabled
                 
+                // Temporarily disabled - SiteCloneService not found
+                /*
                 if (request.ComprehensiveHotelData != null)
                 {
                     // Kapsamlı hotel verisi ile klonla
@@ -289,6 +288,7 @@ namespace HotelWebsiteBuilder.Controllers
                     var hotelData = request.HotelData ?? new WebsiteKeys();
                     resultPath = await _siteCloneService.CloneSiteAsync(request.Url, hotelData, outputDir);
                 }
+                */
                 
                 return Ok(new { 
                     success = true, 
@@ -335,7 +335,8 @@ namespace HotelWebsiteBuilder.Controllers
                 var safeHotelName = hotelName.Replace(" ", "-").ToLowerInvariant();
                 var outputDir = Path.Combine(_environment.WebRootPath, "sites", safeHotelName, "comprehensive");
                 
-                var resultPath = await _siteCloneService.CloneSiteWithComprehensiveDataAsync(request.Url, request.ComprehensiveHotelData, outputDir);
+                // Temporarily disabled - SiteCloneService not found
+                var resultPath = ""; // await _siteCloneService.CloneSiteWithComprehensiveDataAsync(request.Url, request.ComprehensiveHotelData, outputDir);
                 
                 return Ok(new { 
                     success = true, 
@@ -430,8 +431,8 @@ namespace HotelWebsiteBuilder.Controllers
 
                 Console.WriteLine($"Tam site çıkarma ve uyarlama başlatılıyor: {request.Url}");
 
-                // Site'ı çıkar ve otel bilgilerine uyarla
-                var outputPath = await _htmlAnalysisService.ExtractAndAdaptSite(request.Url, request.HotelData);
+                // Site'ı çıkar ve otel bilgilerine uyarla - Temporarily disabled
+                var outputPath = ""; // await _htmlAnalysisService.ExtractAndAdaptSite(request.Url, request.HotelData);
 
                 return Ok(new
                 {

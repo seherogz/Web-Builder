@@ -29,6 +29,8 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Database=hotel_website_builder;Username=postgres;Password=postgres123
+    volumes:
+      - ./backend/HotelWebsiteBuilder/wwwroot:/app/wwwroot
     depends_on:
       postgres:
         condition: service_healthy
