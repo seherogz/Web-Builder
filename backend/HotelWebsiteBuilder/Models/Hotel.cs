@@ -24,10 +24,6 @@ namespace HotelWebsiteBuilder.Models
         
         public string? Website { get; set; }
         
-        // Check-in/out times
-        public string CheckInTime { get; set; } = "14:00";
-        public string CheckOutTime { get; set; } = "12:00";
-        
         // Gallery images as JSON array
         public string? GalleryImagesJson { get; set; }
         
@@ -242,8 +238,6 @@ namespace HotelWebsiteBuilder.Models
                 Email = Email,
                 Website = Website ?? "",
                 LogoUrl = LogoUrl ?? "",
-                CheckInTime = CheckInTime,
-                CheckOutTime = CheckOutTime,
                 SliderImages = GetSliderImages(),
                 GalleryImages = GetGalleryImages(),
                 Facilities = GetFacilities(),
