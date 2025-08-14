@@ -38,6 +38,26 @@
   transform: translateY(0);
 }
 
+/* Custom Form Styles */
+.custom-input {
+  border: 1px solid #986277;
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  transition: all 0.3s ease;
+}
+
+.custom-input:focus {
+  border-color: #4c3949;
+  box-shadow: 0 0 0 0.2rem rgba(76, 57, 73, 0.25);
+  outline: none;
+}
+
+.form-label {
+  color: #4c3949;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
 .modal-xl {
   max-width: 90%;
 }

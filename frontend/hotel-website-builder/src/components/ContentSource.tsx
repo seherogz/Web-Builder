@@ -85,19 +85,7 @@ const ContentSource: React.FC<ContentSourceProps> = ({ onNext, onBack, isCloneMo
         phone: hotelData.phone || '',
         email: hotelData.email || '',
         address: hotelData.address || '',
-        galleryImage1: hotelData.galleryimage1,
-        galleryImage2: hotelData.galleryimage2,
-        galleryImage3: hotelData.galleryimage3,
-        galleryImage4: hotelData.galleryimage4,
-        galleryImage5: hotelData.galleryimage5,
-        facebook: hotelData.facebook,
-        instagram: hotelData.instagram,
-        twitter: hotelData.twitter,
-        website: hotelData.website,
-        description: hotelData.description,
-        amenities: hotelData.amenities,
-        roomTypes: hotelData.roomtypes,
-        pricing: hotelData.pricing
+        description: hotelData.description
       });
       
       setSelectedHotel(newHotel);
@@ -342,11 +330,11 @@ const ContentSource: React.FC<ContentSourceProps> = ({ onNext, onBack, isCloneMo
 
       {/* Yeni Otel Modal */}
       <Modal show={showNewHotelModal} onHide={() => setShowNewHotelModal(false)} size="lg">
-        <Modal.Header closeButton>
+        <Modal.Header closeButton style={{ background: '#4c3949', color: 'white' }}>
           <Modal.Title>Yeni Otel Ekle</Modal.Title>
         </Modal.Header>
         <Form onSubmit={handleNewHotelSubmit}>
-          <Modal.Body>
+          <Modal.Body style={{ background: '#f8f5f7' }}>
             <Row>
               <Col md={6}>
                 <Form.Group className="mb-3">
@@ -356,6 +344,7 @@ const ContentSource: React.FC<ContentSourceProps> = ({ onNext, onBack, isCloneMo
                     value={hotelData.hotelname || ''}
                     onChange={(e) => setHotelData({...hotelData, hotelname: e.target.value})}
                     required
+                    className="custom-input"
                   />
                 </Form.Group>
               </Col>
@@ -366,6 +355,7 @@ const ContentSource: React.FC<ContentSourceProps> = ({ onNext, onBack, isCloneMo
                     type="url"
                     value={hotelData.logourl || ''}
                     onChange={(e) => setHotelData({...hotelData, logourl: e.target.value})}
+                    className="custom-input"
                   />
                 </Form.Group>
               </Col>
@@ -379,6 +369,7 @@ const ContentSource: React.FC<ContentSourceProps> = ({ onNext, onBack, isCloneMo
                     value={hotelData.phone || ''}
                     onChange={(e) => setHotelData({...hotelData, phone: e.target.value})}
                     required
+                    className="custom-input"
                   />
                 </Form.Group>
               </Col>
@@ -390,6 +381,7 @@ const ContentSource: React.FC<ContentSourceProps> = ({ onNext, onBack, isCloneMo
                     value={hotelData.email || ''}
                     onChange={(e) => setHotelData({...hotelData, email: e.target.value})}
                     required
+                    className="custom-input"
                   />
                 </Form.Group>
               </Col>
@@ -401,6 +393,7 @@ const ContentSource: React.FC<ContentSourceProps> = ({ onNext, onBack, isCloneMo
                 value={hotelData.address || ''}
                 onChange={(e) => setHotelData({...hotelData, address: e.target.value})}
                 required
+                className="custom-input"
               />
             </Form.Group>
             <Form.Group className="mb-3">
@@ -410,14 +403,24 @@ const ContentSource: React.FC<ContentSourceProps> = ({ onNext, onBack, isCloneMo
                 rows={3}
                 value={hotelData.description || ''}
                 onChange={(e) => setHotelData({...hotelData, description: e.target.value})}
+                className="custom-input"
               />
             </Form.Group>
           </Modal.Body>
-          <Modal.Footer>
-            <Button variant="secondary" onClick={() => setShowNewHotelModal(false)}>
+          <Modal.Footer style={{ background: '#4c3949' }}>
+            <Button 
+              variant="outline-light" 
+              onClick={() => setShowNewHotelModal(false)}
+              style={{ borderColor: '#986277' }}
+            >
               İptal
             </Button>
-            <Button variant="primary" type="submit" disabled={loading}>
+            <Button 
+              variant="danger" 
+              type="submit" 
+              disabled={loading}
+              style={{ backgroundColor: '#986277', borderColor: '#986277' }}
+            >
               {loading ? 'Kaydediliyor...' : 'Kaydet'}
             </Button>
           </Modal.Footer>
